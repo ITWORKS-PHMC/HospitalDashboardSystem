@@ -4,9 +4,8 @@
 /* /----------- navbar.php -------------/
 /------- navbar style -------/ */
 
-*{
+* {
   width: 100%;
-  
 }
 .navigation-bar {
   width: 100%;
@@ -42,27 +41,26 @@
 }
 
 /* DASHBOARD BUTTON */
-.header{
+.header {
   display: flex;
 }
-.header,h1{
+.header,
+h1 {
   font-size: 40px;
 }
-.button{
-  position:relative ;
+.button {
+  position: relative;
   width: 300px;
   margin-left: 20px;
   display: flex;
   margin-right: 100px;
-  
 }
 
 /* Box */
-.numbers{
+.numbers {
   display: flex;
-
 }
-.boxtotalpatient{
+.boxtotalpatient {
   background-color: rgb(255, 255, 255);
   position: relative;
   width: 220px;
@@ -72,7 +70,7 @@
   height: 50px;
 }
 
-.boxtotalbed{
+.boxtotalbed {
   background-color: rgb(255, 255, 255);
   position: relative;
   width: 220px;
@@ -82,9 +80,9 @@
   height: 50px;
 }
 
-.boxgraph{
+.boxgraph {
   background-color: rgb(255, 255, 255);
-  position:absolute;
+  position: absolute;
   width: 800px;
   border: 1px solid rgb(27, 34, 27);
   padding: 60px;
@@ -106,11 +104,28 @@
   font-size: 20px;
   font-weight: bold;
 }
-.result{
+.result {
   margin: auto;
   font-size: 30px;
   font-weight: bold;
   align-content: center;
   display: flex;
   justify-content: center;
+}
+.graphs-bottom {
+  display: flex;
+  gap: 20px; /* Add spacing between graphs */
+  margin-top: 80px; /* Add margin top */
+  width: 2150px;
+}
+.line-graph {
+  background-color: rgb(255, 255, 255);
+  position: relative;
+  width: 100%;
+  border: 1px solid rgb(27, 34, 27);
+  height: 150px;
+}
+.yearly-graph {
+  position: relative;
+  background-color: rgb(255, 255, 255);
 }
