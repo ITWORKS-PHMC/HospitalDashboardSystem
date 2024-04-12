@@ -9,6 +9,22 @@ require 'connection.php';
     <title>Document</title>
     <?php include("home.php")?>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .bar {
+            display: inline-block;
+            width: 20px;
+            background-color: blue;
+            margin-right: 10px;
+            position: relative;
+        }
+        .bar::after {
+            content: '';
+            display: block;
+            background-color: red;
+            position: absolute;
+            bottom: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -67,8 +83,15 @@ require 'connection.php';
         ?>
     </div>
     
-    <div class="boxgraph"></div>
-
+    <div class="boxgraph">
+    </div>
+        </div>
+<div class="graphs-bottom">
+    <div class="line-graph">
+        <?php include'TotalPatientGraph.php';?>
+    </div>
+    <div class="yearly-graph">
+        <?php include'YearlyGraph.php';?>
     </div>
 </div>
 </body>
