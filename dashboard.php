@@ -17,6 +17,7 @@ require 'connection.php';
             margin-right: 10px;
             position: relative;
         }
+
         .bar::after {
             content: '';
             display: block;
@@ -37,7 +38,7 @@ require 'connection.php';
 
     <div class="numbers">
     <div class="boxtotalpatient">
-    <p class="boxtitle1">Total Beds vs Census</p>
+    <p class="boxtitle1">Total Patient</p>
     <?php
 
     // SQL query to count total patient IDs
@@ -83,7 +84,10 @@ require 'connection.php';
         ?>
     </div>
     
-    <div class="boxgraph">
+        <div class="boxgraph">
+        <?php
+            include 'donut.php';
+        ?> 
     </div>
         </div>
 <div class="graphs-bottom">
