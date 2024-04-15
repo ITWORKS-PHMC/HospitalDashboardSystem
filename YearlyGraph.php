@@ -11,7 +11,7 @@
 
 <?php
 require 'connection.php'; // Make sure to include your database connection script here
-
+    
 // Initialize variables to store counts for each transaction type
 $opd_counts = array();
 $ipd_counts = array();
