@@ -26,7 +26,7 @@ function loadContent(url) {
 <div class="navigation-bar">
   <div class="header-content">
     <div class="header-title">
-      <p>Hospital Dashboard</p>
+      <p>Hospital Dashboard by Ed and Floyd</p>
     </div>
     <div class="header-sections">
       <a href="dashboard.php" class="nav-link" >Dashboard</a>
