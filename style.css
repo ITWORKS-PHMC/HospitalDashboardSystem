@@ -124,3 +124,34 @@ h1 {
   background-color: rgb(255, 255, 255);
   height: 400px;
 }
+.green-arrow {
+  color: rgb(60, 255, 0);
+  animation: arrowUp 2s;
+}
+.red-arrow {
+  color: rgb(221, 0, 0);
+  animation: arrowDown 2s;
+}
+@keyframes arrowUp {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes arrowDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
