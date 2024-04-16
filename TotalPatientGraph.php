@@ -10,7 +10,9 @@ $result = mysqli_query($conn, $sql);
 $years = array();
 $dataPoints = array();
 
-// Initialize data points for all months with count zero
+// Initialize data points for all months with count zero for the selected year and previous year
+$currentYear = date('Y');
+$previousYear = $currentYear - 1;
 for ($i = 1; $i <= 12; $i++) {
     $dataPoints[] = array("y" => 0, "label" => date("F", mktime(0, 0, 0, $i, 1)));
 }
@@ -33,13 +35,21 @@ while ($row = mysqli_fetch_assoc($result)) {
 window.onload = function () {
     var chart = new CanvasJS.Chart("chartContainer", {
         title: {
-            text: "Total Patient for Year 2023" // Default title
+            text: "Total Patient for Year <?php echo $currentYear; ?>" // Default title
         },
         axisY: {
             title: "Number of Total Patient"
         },
         data: [{
             type: "line",
+            showInLegend: true,
+            name: "<?php echo $currentYear; ?>",
+            dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+        },
+        {
+            type: "line",
+            showInLegend: true,
+            name: "<?php echo $previousYear; ?>",
             dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
         }]
     });
@@ -47,16 +57,21 @@ window.onload = function () {
 
     // Function to update chart data based on selected year
     function updateChartData(year) {
-        var newDataPoints = <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>;
+        var newDataPointsCurrentYear = <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>;
+        var newDataPointsPreviousYear = <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>;
         <?php
         foreach ($years as $year => $months) {
             foreach ($months as $month => $total) {
-                echo "if (year == $year) newDataPoints[$month - 1].y = $total;\n";
+                echo "if (year == $year) newDataPointsCurrentYear[$month - 1].y = $total;\n";
+                echo "if (year - 1 == $year) newDataPointsPreviousYear[$month - 1].y = $total;\n";
             }
         }
         ?>
-        chart.options.data[0].dataPoints = newDataPoints;
-        chart.options.title.text = "Total Patient for Year " + year;
+        chart.options.data[0].dataPoints = newDataPointsCurrentYear;
+        chart.options.data[1].dataPoints = newDataPointsPreviousYear;
+        chart.options.title.text = "Total Patient for Year " + year +" & "+ (year - 1).toString();
+        chart.options.data[0].name = year.toString();
+    chart.options.data[1].name = (year - 1).toString();
         chart.render();
     }
 
@@ -66,6 +81,7 @@ window.onload = function () {
         updateChartData(selectedYear);
     };
 }
+
 </script>
 </head>
 <body>
