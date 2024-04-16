@@ -17,15 +17,72 @@ $result3 = mysqli_query($conn, $sql3);
 $row3 = mysqli_fetch_assoc($result3);
 $totalERCensus = $row3['getER'];
 
-$sql4 = "SELECT COUNT(census_id) AS total FROM dashboard_census"; 
-$result4 = mysqli_query($conn, $sql4);
-$row4 = mysqli_fetch_assoc($result4);
-$totalCensus = $row4['total'];
+$sqlTvalueOPD = "SELECT * FROM dashboard_target WHERE target_type ='OPD'";
+$getOPD = mysqli_query($conn, $sqlTvalueOPD);
+
+if ($getOPD) {
+
+    $value1 = mysqli_fetch_assoc($getOPD);
 
 
-$OPDpercentage = round($totalOPDCensus / $totalCensus * 100); 
-$IPDPercentage = round($totalIPDCensus / $totalCensus * 100);
-$ERPercentage = round(100 / 100 * 100);
+    if ($value1) {
+
+        $TValueOPD = $value1['target_value'];
+
+    } else {
+
+        echo "No data found for target_type = 'OPD'";
+    }
+} else {
+
+    echo "Error: " . mysqli_error($conn);
+}
+
+$sqlTvalueIPD = "SELECT * FROM dashboard_target WHERE target_type ='IPD'";
+$getIPD = mysqli_query($conn, $sqlTvalueIPD);
+
+if ($getIPD) {
+
+    $value1 = mysqli_fetch_assoc($getIPD);
+
+
+    if ($value1) {
+
+        $TValueIPD = $value1['target_value'];
+
+    } else {
+
+        echo "No data found for target_type = 'IPD'";
+    }
+} else {
+
+    echo "Error: " . mysqli_error($conn);
+}
+
+$sqlTvalueER = "SELECT * FROM dashboard_target WHERE target_type ='ER'";
+$getER = mysqli_query($conn, $sqlTvalueER);
+
+if ($getER) {
+
+    $value1 = mysqli_fetch_assoc($getER);
+
+
+    if ($value1) {
+
+        $TValueER = $value1['target_value'];
+
+    } else {
+
+        echo "No data found for target_type = 'ER'";
+    }
+} else {
+
+    echo "Error: " . mysqli_error($conn);
+}
+
+$OPDpercentage = round($totalOPDCensus /  $TValueOPD* 100);
+$IPDPercentage = round($totalIPDCensus / $TValueIPD * 100);
+$ERPercentage = round($totalERCensus / $TValueER * 100);
 
 
 
@@ -65,7 +122,6 @@ mysqli_close($conn);
             left: 0;
             top: 0;
         }
-
         .graph {
             width: 300px;
             height: 150px;
@@ -81,8 +137,8 @@ mysqli_close($conn);
             transform: rotate(calc(1deg * (var(--percentage) * 1.8)));
             box-sizing: border-box;
             cursor: pointer;
+            
         }
-
         .graph:after {
             content: attr(data-name) ' ' counter(varible) '%';
             counter-reset: varible var(--percentage);
@@ -102,11 +158,35 @@ mysqli_close($conn);
             transform-origin: 0 50% 0;
             opacity: 0;
         }
+.graph:not(.opd):hover:after {
+    opacity: 0;
+}
 
-        .graph:hover:after {
-            opacity: 1;
-            left: 30px;
-        }
+.graph.opd:hover:after {
+    opacity: 1;
+    left: 30px;
+    color:#000000;
+}
+.graph.ipd:hover:after {
+    opacity: 1;
+    left: 30px;
+    color:#000000;
+}
+.graph.er:hover:after {
+    opacity: 1;
+    left: 30px;
+    color:#000000;
+}
+
+@keyframes fillAnimation{
+  0%{transform : rotate(-45deg);}
+  50%{transform: rotate(135deg);}
+}
+
+@keyframes fillGraphAnimation{
+  0%{transform: rotate(0deg);}
+  50%{transform: rotate(180deg);}
+}
 		.label {
             color: black;
             font-size: 12px;
@@ -180,6 +260,7 @@ mysqli_close($conn);
 	<body>
 		
 		<div class="graph-container">
+            <!-- FOR METER OPD  -->
 			<div class="meter-graph1">
 				<div class="label left">0%</div>
 				<div class="label halfleft">25%</div>
@@ -190,12 +271,17 @@ mysqli_close($conn);
 				<p style="color:black">OPD TARGET CENSUS</p>
 				<?php 
                 echo "Total OPD Census: " . $totalOPDCensus . "<br>";?>
-                </div>
-				<div class="multi-graph margin">
-
-					<div class="graph" data-name="OPD" style="--percentage : <?php echo $OPDpercentage; ?>; --fill: #FEDA3E ;"></div>
-				</div>
+                </div> <div class="multi-graph margin">
+            <div style="top: -10px; left: calc(80% - 5px);"></div>
+            <div class="graph" style="--percentage : 100; --fill: #008000 ;"> </div>
+            <div style="top: -10px; left: calc(60% - 5px);"></div>
+            <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
+            <div style="top: -10px; left: calc(30% - 5px);"></div>
+            <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
+            <div class="graph opd" data-name="OPD" style="--percentage : <?php echo $OPDpercentage; ?>;"></div>
+        </div>
 			</div>
+ <!-- FOR METER IPD  -->
 			<div class="meter-graph2">
                 <div class="label left">0%</div>
 				<div class="label halfleft">25%</div>
@@ -207,9 +293,16 @@ mysqli_close($conn);
 				<?php echo "Total IPD Census: " . $totalIPDCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
-					<div class="graph" data-name="IPD" style="--percentage : <?php echo $IPDPercentage; ?>; --fill: #FEDA3E ;"></div>
+            <div style="top: -10px; left: calc(80% - 5px);"></div>
+            <div class="graph" style="--percentage : 100; --fill: #008000 ;"> </div>
+            <div style="top: -10px; left: calc(60% - 5px);"></div>
+            <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
+            <div style="top: -10px; left: calc(30% - 5px);"></div>
+            <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
+					<div class="graph ipd" data-name="IPD" style="--percentage : <?php echo $IPDPercentage; ?>;"></div>
 				</div>
 			</div>
+             <!-- FOR METER ER  -->
 			<div class="meter-graph3">
                 <div class="label left">0%</div>
 				<div class="label halfleft">25%</div>
@@ -221,7 +314,13 @@ mysqli_close($conn);
 				<?php echo "Total ER Census: " . $totalERCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
-					<div class="graph" data-name="ER" style="--percentage : <?php echo $ERPercentage; ?>; --fill: #FEDA3E ;"></div>
+                      <div style="top: -10px; left: calc(80% - 5px);"></div>
+            <div class="graph" style="--percentage : 100; --fill: #008000 ;"> </div>
+            <div style="top: -10px; left: calc(60% - 5px);"></div>
+            <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
+            <div style="top: -10px; left: calc(30% - 5px);"></div>
+            <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
+					<div class="graph er" data-name="ER" style="--percentage : <?php echo $ERPercentage; ?>;"></div>
 				</div>
 			</div>
 		</div>
