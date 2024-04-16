@@ -42,18 +42,27 @@ require 'connection.php';
     <?php
 
     // SQL query to count total patient IDs
-    $sql = "SELECT COUNT(id) as patient_id FROM patient";
+$sql = "SELECT COUNT(census_id) as totalcensus_id FROM dashboard_census";
+$result = $conn->query($sql);
+$sql2 = "SELECT SUM(target_value) as totaltarget FROM dashboard_target";
+$result2 = $conn->query($sql2);
 
-    $result = $conn->query($sql);
+if ($result->num_rows > 0 && $result2->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        // Reset the pointer of $result2 back to the beginning for each iteration of the outer loop
+        $result2->data_seek(0);
 
-    if ($result->num_rows > 0) {
-        // Output data of each row
-        while($row = $result->fetch_assoc()) {
-            echo "<div class='result'>" . $row["patient_id"] ."</div>";
+        while ($row2 = $result2->fetch_assoc()) {
+            if ($row["totalcensus_id"] >= $row2["totaltarget"]) {
+                echo "<div class='result'>" . $row["totalcensus_id"] . "<span class='green-arrow' style='float: right;'>&#8593;</span></div>";
+            } else { // If the total count is less than 14, display down arrow
+                echo "<div class='result'><span class='red-arrow' style='float: left;'>&#8595;</span>" . $row["totalcensus_id"] . "</div>";
+            }
         }
-    } else {
-    echo "0 results";
-    }   
+    }
+} else {
+    echo "No patients";
+}
 
     ?>
     </div>
