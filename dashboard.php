@@ -1,12 +1,20 @@
 <?php
 require 'connection.php';
+// Fetch distinct years from the dashboard_census table
+$yearQuery = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
+$yearResult = mysqli_query($conn, $yearQuery);
+
+// Fetch distinct months from the dashboard_census table
+$monthQuery = "SELECT DISTINCT MONTHNAME(transaction_date) AS month, MONTH(transaction_date) AS month_num FROM dashboard_census";
+$monthResult = mysqli_query($conn, $monthQuery);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
     <?php include("home.php")?>
     <link rel="stylesheet" href="style.css">
     <style>
@@ -28,24 +36,33 @@ require 'connection.php';
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>DASHBOARD</h1>
-        <div class="button">
-        <button>Year Filter</button>
-        <button>Month Filter</button>
-        </div>
-    </div>
+   <div class="header">
+    <h1>DASHBOARD</h1>
+    <div class="button">
+        <select id="yearDropdown">
+            <option value="">Select Year</option>
+            <?php while ($yearRow = mysqli_fetch_assoc($yearResult)) { ?>
+                <option value="<?php echo $yearRow['year']; ?>"><?php echo $yearRow['year']; ?></option>
+            <?php } ?>
+        </select>
 
+        <select id="monthDropdown">
+            <option value="">Select Month</option>
+            <?php while ($monthRow = mysqli_fetch_assoc($monthResult)) { ?>
+                <option value="<?php echo $monthRow['month_num']; ?>"><?php echo $monthRow['month']; ?></option>
+            <?php } ?>
+        </select>
+    </div>
+</div>
     <div class="numbers">
     <div class="boxtotalpatient">
     <p class="boxtitle1">Total Patient</p>
     <?php
-
     // SQL query to count total patient IDs
-$sql = "SELECT COUNT(census_id) as totalcensus_id FROM dashboard_census";
-$result = $conn->query($sql);
-$sql2 = "SELECT SUM(target_value) as totaltarget FROM dashboard_target";
-$result2 = $conn->query($sql2);
+    $sql = "SELECT COUNT(census_id) as totalcensus_id FROM dashboard_census";
+    $result = $conn->query($sql);
+    $sql2 = "SELECT SUM(target_value) as totaltarget FROM dashboard_target";
+    $result2 = $conn->query($sql2);
 
 if ($result->num_rows > 0 && $result2->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
