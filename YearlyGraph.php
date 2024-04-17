@@ -89,9 +89,6 @@ if (!empty($er_counts)) {
     );
 }
 ?>
-
-
-
     <script>
         var ctx = document.getElementById('myChart').getContext('2d');
         var myChart = new Chart(ctx, {
