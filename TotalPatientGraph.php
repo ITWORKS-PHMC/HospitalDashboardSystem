@@ -85,15 +85,6 @@ window.onload = function () {
 </script>
 </head>
 <body>
-<!-- Dropdown for selecting year -->
-<select id="yearDropdown">
-    <?php
-        // Populate dropdown with available years
-        foreach ($years as $year => $months) {
-            echo "<option value='$year'>$year</option>";
-        }
-    ?>
-</select>
 <div id="chartContainer"></div>
 </body>
 </html>
