@@ -9,31 +9,49 @@
         <canvas id="myChart"></canvas>
     </div>
 
+    <!-- Dropdown select element for selecting years -->
+    <select id="yearDropdown">
+        <option value="">Select Year</option>
+        <?php
+        require 'connection.php'; // Include your database connection script
+
+        // Query distinct years from the database
+        $sql_years = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
+        $result_years = $conn->query($sql_years);
+        if ($result_years->num_rows > 0) {
+            while($row_year = $result_years->fetch_assoc()) {
+                $year = $row_year["year"];
+                echo "<option value=\"$year\">$year</option>";
+            }
+        }
+        ?>
+    </select>
+
 <?php
-require 'connection.php'; // Make sure to include your database connection script here
-    
 // Initialize variables to store counts for each transaction type
 $opd_counts = array();
 $ipd_counts = array();
 $er_counts = array();
 
-$sql = "SELECT * FROM dashboard_census";
+$sql = "SELECT patient_transaction_type, YEAR(transaction_date) AS transaction_year, COUNT(*) AS transaction_count 
+        FROM dashboard_census 
+        WHERE patient_transaction_type IN ('OPD', 'IPD', 'ER')
+        GROUP BY patient_transaction_type, transaction_year";
 $result = $conn->query($sql);
 
 // Iterate through each row in the result set
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         // Increment counts based on the patient_transaction_type and transaction_date
-        $year = date("Y", strtotime($row["transaction_date"])); // Extract year from transaction_date
         switch($row["patient_transaction_type"]) {
             case "OPD":
-                $opd_counts[$year] = ($opd_counts[$year] ?? 0) + 1;
+                $opd_counts[$row["transaction_year"]] = $row["transaction_count"];
                 break;
             case "IPD":
-                $ipd_counts[$year] = ($ipd_counts[$year] ?? 0) + 1;
+                $ipd_counts[$row["transaction_year"]] = $row["transaction_count"];
                 break;
             case "ER":
-                $er_counts[$year] = ($er_counts[$year] ?? 0) + 1;
+                $er_counts[$row["transaction_year"]] = $row["transaction_count"];
                 break;
         }
     }
@@ -51,50 +69,45 @@ foreach ($all_years as $year) {
     $er_counts[$year] = $er_counts[$year] ?? 0;
 }
 
-// Sort the arrays by keys (years) in ascending order
-ksort($opd_counts);
-ksort($ipd_counts);
-ksort($er_counts);
-
 // Prepare datasets for Chart.js
-$datasets = array();
-if (!empty($opd_counts)) {
-    $datasets[] = array(
+$datasets = array(
+    array(
         'label' => 'OPD',
         'data' => array_values($opd_counts),
         'borderColor' => 'rgba(255, 99, 132, 1)',
         'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
         'tension' => 0.4,
         'fill' => false
-    );
-}
-if (!empty($ipd_counts)) {
-    $datasets[] = array(
+    ),
+    array(
         'label' => 'IPD',
         'data' => array_values($ipd_counts),
         'borderColor' => 'rgba(54, 162, 235, 1)',
         'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
         'tension' => 0.4,
         'fill' => false
-    );
-}
-if (!empty($er_counts)) {
-    $datasets[] = array(
+    ),
+    array(
         'label' => 'ER',
         'data' => array_values($er_counts),
         'borderColor' => 'rgba(255, 206, 86, 1)',
         'backgroundColor' => 'rgba(255, 206, 86, 0.2)',
         'tension' => 0.4,
         'fill' => false
-    );
-}
+    )
+);
 ?>
-    <script>
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
+
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart;
+
+    // Function to initialize chart with data
+    function initializeChart(selectedYear) {
+        myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: <?php echo json_encode(array_keys($opd_counts + $ipd_counts + $er_counts)); ?>,
+                labels: [selectedYear, selectedYear - 1, selectedYear - 2],
                 datasets: <?php echo json_encode($datasets); ?>
             },
             options: {
@@ -116,7 +129,60 @@ if (!empty($er_counts)) {
                 }
             }
         });
-    </script>
+    }
+
+    // Function to update chart based on selected year
+    function updateChart(selectedYear) {
+        // Update chart with data for the selected year
+        myChart.data.labels = [selectedYear, selectedYear - 1, selectedYear - 2];
+        myChart.data.datasets.forEach(function(dataset, index) {
+            switch (dataset.label) {
+                case 'OPD':
+                    dataset.data = [
+                        <?php 
+                            echo isset($opd_counts[$selectedYear]) ? $opd_counts[$selectedYear] : 0;
+                            echo isset($opd_counts[$selectedYear - 1]) ? ',' . $opd_counts[$selectedYear - 1] : ',0';
+                            echo isset($opd_counts[$selectedYear - 2]) ? ',' . $opd_counts[$selectedYear - 2] : ',0';
+                        ?> 
+                    ];
+                    break;
+                case 'IPD':
+                    dataset.data = [
+                        <?php 
+                            echo isset($ipd_counts[$selectedYear]) ? $ipd_counts[$selectedYear] : 0;
+                            echo isset($ipd_counts[$selectedYear - 1]) ? ',' . $ipd_counts[$selectedYear - 1] : ',0';
+                            echo isset($ipd_counts[$selectedYear - 2]) ? ',' . $ipd_counts[$selectedYear - 2] : ',0';
+                        ?> 
+                    ];
+                    break;
+                case 'ER':
+                    dataset.data = [
+                        <?php 
+                            echo isset($er_counts[$selectedYear]) ? $er_counts[$selectedYear] : 0;
+                            echo isset($er_counts[$selectedYear - 1]) ? ',' . $er_counts[$selectedYear - 1] : ',0';
+                            echo isset($er_counts[$selectedYear - 2]) ? ',' . $er_counts[$selectedYear - 2] : ',0';
+                        ?> 
+                    ];
+                    break;
+            }
+        });
+        myChart.update();
+    }
+
+    // Event listener for dropdown change
+    document.getElementById('yearDropdown').addEventListener('change', function() {
+        var selectedYear = this.value;
+        if (selectedYear !== '') {
+            // Update chart based on selected year
+            updateChart(selectedYear);
+        }
+    });
+
+    // Initialize chart with initial data
+    var selectedYear = document.getElementById('yearDropdown').value;
+    initializeChart(selectedYear);
+
+</script>
 
 </body>
 </html>
