@@ -121,7 +121,7 @@ if ($result->num_rows > 0 && $result2->num_rows > 0) {
         <?php include'TotalPatientGraph.php';?>
     </div>
     <div class="yearly-graph">
-        <?php include'YearlyGraph.php';?>
+        <?php include'yearlygraph.php';?>
     </div>
 </div>
 </body>
