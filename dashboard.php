@@ -80,7 +80,6 @@ if ($result->num_rows > 0 && $result2->num_rows > 0) {
 } else {
     echo "No patients";
 }
-
     ?>
     </div>
 
@@ -116,12 +115,9 @@ if ($result->num_rows > 0 && $result2->num_rows > 0) {
         ?> 
     </div>
         </div>
-<div class="graphs-bottom">
-    <div class="line-graph">
+<div class="graphs-bottom" >
+    <div class="line-graph" >
         <?php include'TotalPatientGraph.php';?>
-    </div>
-    <div class="yearly-graph">
-        <?php include'yearlygraph.php';?>
     </div>
 </div>
 </body>
