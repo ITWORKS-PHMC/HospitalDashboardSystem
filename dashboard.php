@@ -36,7 +36,7 @@ $monthResult = mysqli_query($conn, $monthQuery);
     </style>
 </head>
 <body>
-   <div class="header">
+   <div class="header" style="height:50px;">
     <h1>DASHBOARD</h1>
     <div class="button">
         <select id="yearDropdown">
@@ -118,7 +118,11 @@ if ($result->num_rows > 0 && $result2->num_rows > 0) {
 <div class="graphs-bottom" >
     <div class="line-graph" >
         <?php include'TotalPatientGraph.php';?>
+        <?php //include'example.php';?>
     </div>
+</div>
+<div>
+    
 </div>
 </body>
 </html>
