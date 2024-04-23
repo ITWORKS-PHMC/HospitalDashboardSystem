@@ -1,18 +1,28 @@
 <?php
 require 'connection.php';
 
+// Get selected year and month from URL parameters
+if(isset($_GET['selected_year']) && isset($_GET['selected_month'])) {
+    $selected_year = $_GET['selected_year'];
+    $selected_month = $_GET['selected_month'];
+} else {
+    // Default to current year and month if not set
+    $selected_year = date('Y');
+    $selected_month = date('m');
+}
+
 // Assuming 'dashboard_census' is your table name
-$sql = "SELECT COUNT(census_id) AS getOPD FROM dashboard_census WHERE patient_transaction_type = 'OPD'"; // GET OPD 
+$sql = "SELECT COUNT(census_id) AS getOPD FROM dashboard_census WHERE patient_transaction_type = 'OPD' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET OPD 
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $totalOPDCensus = $row['getOPD'];
 
-$sql2 = "SELECT COUNT(census_id) AS getIPD FROM dashboard_census WHERE patient_transaction_type = 'IPD'"; // GET IPD
+$sql2 = "SELECT COUNT(census_id) AS getIPD FROM dashboard_census WHERE patient_transaction_type = 'IPD' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET IPD
 $result2 = mysqli_query($conn, $sql2);
 $row2 = mysqli_fetch_assoc($result2);
 $totalIPDCensus = $row2['getIPD'];
 
-$sql3 = "SELECT COUNT(census_id) AS getER FROM dashboard_census WHERE patient_transaction_type = 'ER'"; // GET ER
+$sql3 = "SELECT COUNT(census_id) AS getER FROM dashboard_census WHERE patient_transaction_type = 'ER' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET ER
 $result3 = mysqli_query($conn, $sql3);
 $row3 = mysqli_fetch_assoc($result3);
 $totalERCensus = $row3['getER'];
@@ -83,8 +93,6 @@ if ($getER) {
 $OPDpercentage = round($totalOPDCensus /  $TValueOPD* 100);
 $IPDPercentage = round($totalIPDCensus / $TValueIPD * 100);
 $ERPercentage = round($totalERCensus / $TValueER * 100);
-
-
 
 mysqli_close($conn);
 ?>
@@ -258,7 +266,7 @@ mysqli_close($conn);
 	</style>
 	</head>
 	<body>
-		
+        
 		<div class="graph-container">
             <!-- FOR METER OPD  -->
 			<div class="meter-graph1">
@@ -347,6 +355,27 @@ mysqli_close($conn);
         opdArrow.style.transform = `translate(-50%, 0) rotate(${opdArrowPosition * 1.8 - 90}deg)`;
         ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
         erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
+
+
+// Function to generate options for each month
+function generateMonthOptions() {
+    var select = document.getElementById("monthFilter");
+    var currentMonth = new Date().getMonth() + 1; // Adding 1 because JavaScript months are 0-indexed
+
+
+    for (var i = 1; i <= 12; i++) {
+        var option = document.createElement("option");
+        option.value = i < 10 ? "0" + i : "" + i; // Adding leading zero if needed
+        option.text = monthNames[i - 1]; // Subtracting 1 because months are 0-indexed in JavaScript
+        select.appendChild(option);
+    }
+
+    // Set default selected month
+    select.value = currentMonth < 10 ? "0" + currentMonth : "" + currentMonth;
+}
+
+// Call the function to generate options when the page loads
+generateMonthOptions();
     </script>
 	</body>
 	</html>
