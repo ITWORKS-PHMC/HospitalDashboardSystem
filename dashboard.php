@@ -43,8 +43,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     <div class="button">
         <!-- Year dropdown form -->
         <form id="YearForm" action="dashboard.php" method="GET">
-            <select id="yearDropdown" name="selected_year">
-                <option value="">Select Year</option>
+            <select class="Filter-button" id="yearDropdown" name="selected_year" >
                 <?php
                 while ($yearRow = mysqli_fetch_assoc($yearResult)) {
                     ?>
@@ -57,7 +56,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         </form>
 
         <form id="monthForm">
-            <select id="monthFilter" name="selected_month">
+            <select class = "Filter-button" id="monthFilter" name="selected_month">
                 <?php
                 // Generate options for each month
                 for($i = 1; $i <= 12; $i++) {
@@ -150,7 +149,6 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 <div class="graphs-bottom">
     <div class="line-graph">
         <?php include 'TotalPatientGraph.php'; ?>
-        <?php //include 'example.php'; ?>
     </div>
 </div>
 
