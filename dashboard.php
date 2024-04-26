@@ -74,44 +74,11 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 
 <div class="numbers">
     <div class="boxtotalpatient">
-        <p class="boxtitle1">Total Patient</p>
-        <?php
-        // SQL query to count total patient IDs for the selected year
-        $sql = "SELECT COUNT(census_id) as totalcensus_id FROM dashboard_census WHERE YEAR(transaction_date) = $selected_year";
-        $result = $conn->query($sql);
-
-        // Check if there are results
-        if ($result->num_rows > 0) {
-            // Fetch the total patient count
-            $row = $result->fetch_assoc();
-            $totalPatients = $row["totalcensus_id"];
-
-            // SQL query to get the target value for the selected year
-            $sql2 = "SELECT SUM(target_value) as totaltarget FROM dashboard_target";
-            $result2 = $conn->query($sql2);
-
-            if ($result2->num_rows > 0) {
-                // Fetch the target value
-                $row2 = $result2->fetch_assoc();
-                $totalTarget = $row2["totaltarget"];
-               echo "<script>console.log('$totalPatients');</script>";
-                // Compare total patients with the target value
-                if ($totalPatients >= $totalTarget) {
-                    // Display total patients with green arrow
-                    echo "<div class='result'>$totalPatients<span class='green-arrow' style='float: right;'>&#8593;</span></div>";
-                } else {
-                    // Display total patients with red arrow
-                    echo "<div class='result'><span class='red-arrow' style='float: left;'>&#8595;</span>$totalPatients</div>";
-                }
-            } else {
-                echo "No target set for the selected year";
-            }
-        } else {
-            echo "No patients for the selected year";
-        }
-        ?>
+    <p class="boxtitle1">Total Patient</p>
+    <div id = "boxtotalpatient" >
+        <?php include 'totalpatient.php'; ?>
     </div>
-
+    </div>
     <div class="boxtotalbed">
         <p class="boxtitle">Total Beds vs Census</p>
         <?php
@@ -165,12 +132,14 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         xhttp.open("GET", "donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
         xhttp.send();
     }
+    
 
     // Function to handle year selection change without refreshing the page
     document.getElementById("yearDropdown").addEventListener("change", function() {
         var selectedYear = this.value;
         var selectedMonth = document.getElementById("monthFilter").value;
         updateDonut(selectedYear, selectedMonth);
+        updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
     });
 
     // Function to handle month selection change without refreshing the page
@@ -178,12 +147,23 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         var selectedYear = document.getElementById("yearDropdown").value;
         var selectedMonth = this.value;
         updateDonut(selectedYear, selectedMonth);
+        updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
     });
-</script>
 
+// Function to update the total patient count using AJAX
+function updateTotalPatients(selectedYear, selectedMonth) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("boxtotalpatient").innerHTML = this.responseText;
+        }
+    };
+    xhttp.open("GET", "totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
+    xhttp.send();
+}
+</script>
 </body>
 </html>
-
 <?php
 // Close connection
 $conn->close();

@@ -275,6 +275,7 @@ mysqli_close($conn);
 				<div class="label top">50%</div>
 				<div class="label halfright">75%</div>
 				<div class="label right">100%</div>
+                <div class = "arrow"></div>
                 <div class = "chart-label">
 				<p style="color:black">OPD TARGET CENSUS</p>
 				<?php 
@@ -289,13 +290,14 @@ mysqli_close($conn);
             <div class="graph opd" data-name="OPD" style="--percentage : <?php echo $OPDpercentage; ?>;"></div>
         </div>
 			</div>
- <!-- FOR METER IPD  -->
+             <!-- FOR METER IPD  -->
 			<div class="meter-graph2">
                 <div class="label left">0%</div>
 				<div class="label halfleft">25%</div>
 				<div class="label top">50%</div>
 				<div class="label halfright">75%</div>
 				<div class="label right">100%</div>
+                <div class = "arrow"></div>
                 <div class = "chart-label">
 				<p class = "chart-label" style="color:black">IPD TARGET CENSUS</p>
 				<?php echo "Total IPD Census: " . $totalIPDCensus . "<br>";?>
@@ -317,6 +319,7 @@ mysqli_close($conn);
 				<div class="label top">50%</div>
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
+                <div class = "arrow"></div>
                 <div class = "chart-label">
 				<p class = "chart-label" style="color:black">ER TARGET CENSUS</p>
 				<?php echo "Total ER Census: " . $totalERCensus . "<br>";?>
@@ -333,7 +336,7 @@ mysqli_close($conn);
 			</div>
 		</div>
     <script>
-        // Calculate arrow position for OPD
+// default arrow
         var opdArrowPosition = <?php echo $OPDpercentage; ?>;
         var opdArrow = document.createElement('div');
         opdArrow.classList.add('arrow');
@@ -356,6 +359,30 @@ mysqli_close($conn);
         ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
         erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
 
+        function generateArrow(){
+        // Calculate arrow position for OPD
+        var opdArrowPosition = <?php echo $OPDpercentage; ?>;
+        var opdArrow = document.createElement('div');
+        opdArrow.classList.add('arrow');
+        document.querySelector('.meter-graph1').appendChild(opdArrow);
+
+        // Calculate arrow position for IPD
+        var ipdArrowPosition = <?php echo $IPDPercentage; ?>;
+        var ipdArrow = document.createElement('div');
+        ipdArrow.classList.add('arrow');
+        document.querySelector('.meter-graph2').appendChild(ipdArrow);
+
+        // Calculate arrow position for ER
+        var erArrowPosition = <?php echo $ERPercentage; ?>;
+        var erArrow = document.createElement('div');
+        erArrow.classList.add('arrow');
+        document.querySelector('.meter-graph3').appendChild(erArrow);
+
+        // Adjust position of arrows based on percentage
+        opdArrow.style.transform = `translate(-50%, 0) rotate(${opdArrowPosition * 1.8 - 90}deg)`;
+        ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
+        erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
+        }
 
 // Function to generate options for each month
 function generateMonthOptions() {
