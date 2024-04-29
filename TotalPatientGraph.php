@@ -66,8 +66,8 @@ if ($result_chart2->num_rows > 0) {
 <div class="chart-1" style="flex: 1; margin-right: 10px;">
 <div id="chartContainer" style="height: 370px; width: 1200px;"></div>
 </div>
-<div class="chart-2" style="flex: 1; margin-left: 100px;">
-<div id="chartContainer2" style="height: 370px; width: 550px;"></div>
+<div class="chart-2" style="flex: 1; margin-left: 10px;">
+<div id="chartContainer2" style="height: 370px; width: 675px;"></div>
 </div>
 </div>
 
@@ -152,7 +152,7 @@ var chart2 = new CanvasJS.Chart("chartContainer2", {
     ]
 });
 
-    
+   
     chart.render();
     chart2.render();
 
