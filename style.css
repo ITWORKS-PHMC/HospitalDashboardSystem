@@ -56,6 +56,7 @@ h1 {
   width: 300px;
   margin-left: 20px;
   display: flex;
+  color: white;
 }
 
 /* Box */
@@ -63,46 +64,48 @@ h1 {
   display: flex;
 }
 .boxtotalpatient {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   background-color: rgb(255, 255, 255);
   position: relative;
   width: 200px;
-  border: 1px solid rgb(27, 34, 27);
   padding: 70px;
   margin: 10px;
   height: 50px;
 }
 
 .boxtotalbed {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   background-color: rgb(255, 255, 255);
   position: relative;
   width: 220px;
-  border: 1px solid rgb(27, 34, 27);
   padding: 70px;
   margin: 10px;
   height: 50px;
 }
 
 .boxgraph {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   background-color: rgb(255, 255, 255);
   position: relative;
   width: 80%;
   padding: 60px;
   margin: 10px;
-
   height: 150px;
-  border: 1px solid black;
 }
 .boxtitle1 {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 90px;
   font-size: 20px;
   font-weight: bold;
 }
 .boxtitle {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 55px;
   font-size: 20px;
   font-weight: bold;
 }
@@ -117,7 +120,7 @@ h1 {
 .graphs-bottom {
   display: flex;
   gap: 20px; /* Add spacing between graphs */
-  margin-top: 80px; /* Add margin top */
+  margin-top: 10px; /* Add margin top */
   width: 1850px;
 }
 .line-graph {
@@ -333,8 +336,10 @@ h1 {
 .Filter-button {
   background-color: #426b1f;
   height: 30px;
-  width: 100px;
+  width: 145px;
   text-align: center;
+  color: white;
+  margin: 5px;
 }
 body {
   background-color: #dff0e5;
