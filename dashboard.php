@@ -19,28 +19,10 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     <title>Dashboard</title>
     <?php include("home.php")?>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .bar {
-            display: inline-block;
-            width: 20px;
-            background-color: blue;
-            margin-right: 10px;
-            position: relative;
-        }
-
-        .bar::after {
-            content: '';
-            display: block;
-            background-color: red;
-            position: absolute;
-            bottom: 0;
-        }
-    </style>
 </head>
 <body>
    <div class="header" style="height:50px;">
-    <h1>DASHBOARD</h1>
-    <div class="button">
+    <div class="button" style="margin-left: auto;">
         <!-- Year dropdown form -->
         <form id="YearForm" action="dashboard.php" method="GET">
             <select class="Filter-button" id="yearDropdown" name="selected_year" >
@@ -81,30 +63,10 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     </div>
     <div class="boxtotalbed">
         <p class="boxtitle">Total Beds vs Census</p>
-        <?php
-        // SQL query to select all visits
-        $sql = "SELECT * FROM dashboard_census";
-
-        $result = $conn->query($sql);
-
-        // Variable to store the count of IPD visits
-        $ipdCount = 0;
-
-        if ($result->num_rows > 0) {
-            // Loop through each row of the result set
-            while ($row = $result->fetch_assoc()) {
-                // Check if the department type is IPD and increment the count if true
-                if ($row['patient_transaction_type'] === 'IPD') {
-                    $ipdCount++;
-                }
-            }
-            echo "<div class='result'>" . $ipdCount . "/3000"."</div>";
-        } else {
-            echo "0 results";
-        }
-        ?>
+        <div id="boxtotalIPD">
+        <?php include 'totalbed.php'; ?>
     </div>
-    
+    </div>
     <div class="boxgraph">
         <!-- Container to load donut.php content -->
         <div id="donutContainer">
@@ -121,17 +83,18 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 
 <!-- JavaScript for AJAX -->
 <script>
-    // Function to update the content of donut.php using AJAX
-    function updateDonut(selectedYear, selectedMonth) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("donutContainer").innerHTML = this.responseText;
-            }
-        };
-        xhttp.open("GET", "donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
-        xhttp.send();
-    }
+        // Function to update the content of donut.php using AJAX
+        function updateDonut(selectedYear, selectedMonth) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("donutContainer").innerHTML = this.responseText;
+                    generateArrow();
+                }
+            };
+            xhttp.open("GET", "donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
+            xhttp.send();
+        }
     
 
     // Function to handle year selection change without refreshing the page
@@ -140,6 +103,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         var selectedMonth = document.getElementById("monthFilter").value;
         updateDonut(selectedYear, selectedMonth);
         updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
+        updateTotalIPD(selectedYear, selectedMonth); // Call to update IPD
     });
 
     // Function to handle month selection change without refreshing the page
@@ -148,6 +112,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         var selectedMonth = this.value;
         updateDonut(selectedYear, selectedMonth);
         updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
+        updateTotalIPD(selectedYear, selectedMonth); // Call to update IPD
     });
 
 // Function to update the total patient count using AJAX
@@ -159,6 +124,18 @@ function updateTotalPatients(selectedYear, selectedMonth) {
         }
     };
     xhttp.open("GET", "totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
+    xhttp.send();
+}
+
+// Function to update the total IPD count using AJAX
+function updateTotalIPD(selectedYear, selectedMonth) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("boxtotalIPD").innerHTML = this.responseText;
+        }
+    };
+    xhttp.open("GET", "totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send();
 }
 </script>
