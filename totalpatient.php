@@ -4,9 +4,6 @@ require 'connection.php';
 $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('Y');
 $selected_month = isset($_GET['selected_month']) ? $_GET['selected_month'] : date('m');
 
-// Assuming $conn is the database connection object established in connection.php
-require 'connection.php';
-
 // SQL query to count total patient IDs for the selected year and month
 $sql = "SELECT COUNT(census_id) as totalcensus_id 
         FROM dashboard_census 
