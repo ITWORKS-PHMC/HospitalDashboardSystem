@@ -275,7 +275,7 @@ mysqli_close($conn);
 				<div class="label top">50%</div>
 				<div class="label halfright">75%</div>
 				<div class="label right">100%</div>
-                <div class = "arrow"></div>
+
                 <div class = "chart-label">
 				<p style="color:black">OPD TARGET CENSUS</p>
 				<?php 
@@ -297,7 +297,6 @@ mysqli_close($conn);
 				<div class="label top">50%</div>
 				<div class="label halfright">75%</div>
 				<div class="label right">100%</div>
-                <div class = "arrow"></div>
                 <div class = "chart-label">
 				<p class = "chart-label" style="color:black">IPD TARGET CENSUS</p>
 				<?php echo "Total IPD Census: " . $totalIPDCensus . "<br>";?>
@@ -319,7 +318,6 @@ mysqli_close($conn);
 				<div class="label top">50%</div>
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
-                <div class = "arrow"></div>
                 <div class = "chart-label">
 				<p class = "chart-label" style="color:black">ER TARGET CENSUS</p>
 				<?php echo "Total ER Census: " . $totalERCensus . "<br>";?>
@@ -336,7 +334,7 @@ mysqli_close($conn);
 			</div>
 		</div>
     <script>
-// default arrow
+        // default arrow
         var opdArrowPosition = <?php echo $OPDpercentage; ?>;
         var opdArrow = document.createElement('div');
         opdArrow.classList.add('arrow');
@@ -359,50 +357,36 @@ mysqli_close($conn);
         ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
         erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
 
-        function generateArrow(){
-        // Calculate arrow position for OPD
-        var opdArrowPosition = <?php echo $OPDpercentage; ?>;
-        var opdArrow = document.createElement('div');
-        opdArrow.classList.add('arrow');
-        document.querySelector('.meter-graph1').appendChild(opdArrow);
+function generateArrow() {
+    console.log("arrow updated")
 
-        // Calculate arrow position for IPD
-        var ipdArrowPosition = <?php echo $IPDPercentage; ?>;
-        var ipdArrow = document.createElement('div');
-        ipdArrow.classList.add('arrow');
-        document.querySelector('.meter-graph2').appendChild(ipdArrow);
+    // Remove existing arrows if they exist
+    var existingArrows = document.querySelectorAll('.arrow');
+    existingArrows.forEach(function(arrow) {
+        arrow.remove();
+    });
 
-        // Calculate arrow position for ER
-        var erArrowPosition = <?php echo $ERPercentage; ?>;
-        var erArrow = document.createElement('div');
-        erArrow.classList.add('arrow');
-        document.querySelector('.meter-graph3').appendChild(erArrow);
+    // Calculate arrow position for OPD
+    var opdArrowPosition = <?php echo $OPDpercentage; ?>;
+    var opdArrow = document.createElement('div');
+    opdArrow.classList.add('arrow');
+    document.querySelector('.meter-graph1').appendChild(opdArrow);
+    opdArrow.style.transform = `translate(-50%, 0) rotate(${opdArrowPosition * 1.8 - 90}deg)`;
 
-        // Adjust position of arrows based on percentage
-        opdArrow.style.transform = `translate(-50%, 0) rotate(${opdArrowPosition * 1.8 - 90}deg)`;
-        ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
-        erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
-        }
+    // Calculate arrow position for IPD
+    var ipdArrowPosition = <?php echo $IPDPercentage; ?>;
+    var ipdArrow = document.createElement('div');
+    ipdArrow.classList.add('arrow');
+    document.querySelector('.meter-graph2').appendChild(ipdArrow);
+    ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
 
-// Function to generate options for each month
-function generateMonthOptions() {
-    var select = document.getElementById("monthFilter");
-    var currentMonth = new Date().getMonth() + 1; // Adding 1 because JavaScript months are 0-indexed
-
-
-    for (var i = 1; i <= 12; i++) {
-        var option = document.createElement("option");
-        option.value = i < 10 ? "0" + i : "" + i; // Adding leading zero if needed
-        option.text = monthNames[i - 1]; // Subtracting 1 because months are 0-indexed in JavaScript
-        select.appendChild(option);
-    }
-
-    // Set default selected month
-    select.value = currentMonth < 10 ? "0" + currentMonth : "" + currentMonth;
+    // Calculate arrow position for ER
+    var erArrowPosition = <?php echo $ERPercentage; ?>;
+    var erArrow = document.createElement('div');
+    erArrow.classList.add('arrow');
+    document.querySelector('.meter-graph3').appendChild(erArrow);
+    erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
 }
-
-// Call the function to generate options when the page loads
-generateMonthOptions();
     </script>
 	</body>
 	</html>
