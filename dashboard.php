@@ -16,7 +16,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard</title>  
     <?php include("home.php")?>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -83,19 +83,26 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 
 <!-- JavaScript for AJAX -->
 <script>
-        // Function to update the content of donut.php using AJAX
-        function updateDonut(selectedYear, selectedMonth) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("donutContainer").innerHTML = this.responseText;
-                    generateArrow();
-                }
-            };
-            xhttp.open("GET", "donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
-            xhttp.send();
+// Function to update the content of donut.php using AJAX
+function updateDonut(selectedYear, selectedMonth) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // Update donutContainer with the new content
+            document.getElementById("donutContainer").innerHTML = this.responseText;
+
+            // Extract updated percentages from the response content
+            var opdpercentage = parseFloat(document.getElementById("opdPercentage").innerText);
+            var ipdPercentage = parseFloat(document.getElementById("ipdPercentage").innerText);
+            var erPercentage = parseFloat(document.getElementById("erPercentage").innerText);
+
+            // Call generateArrow() with updated data after content is updated
+            generateArrow(opdpercentage, ipdPercentage, erPercentage);
         }
-    
+    };
+    xhttp.open("GET", "donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
+    xhttp.send(); 
+}
 
     // Function to handle year selection change without refreshing the page
     document.getElementById("yearDropdown").addEventListener("change", function() {
