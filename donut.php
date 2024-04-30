@@ -90,9 +90,28 @@ if ($getER) {
     echo "Error: " . mysqli_error($conn);
 }
 
-$OPDpercentage = round($totalOPDCensus /  $TValueOPD* 100);
-$IPDPercentage = round($totalIPDCensus / $TValueIPD * 100);
-$ERPercentage = round($totalERCensus / $TValueER * 100);
+// Assuming 'dashboard_target' is your table name for target values
+
+// Check if the target value for OPD is available
+if (isset($TValueOPD) && $TValueOPD != 0) {
+    $OPDpercentage = round($totalOPDCensus /  $TValueOPD * 100);
+} else {
+    $OPDpercentage = 0; // or any default value you prefer
+}
+
+// Check if the target value for IPD is available
+if (isset($TValueIPD) && $TValueIPD != 0) {
+    $IPDPercentage = round($totalIPDCensus / $TValueIPD * 100);
+} else {
+    $IPDPercentage = 0; // or any default value you prefer
+}
+
+// Check if the target value for ER is available
+if (isset($TValueER) && $TValueER != 0) {
+    $ERPercentage = round($totalERCensus / $TValueER * 100);
+} else {
+    $ERPercentage = 0; // or any default value you prefer
+}
 
 mysqli_close($conn);
 ?>
@@ -266,7 +285,10 @@ mysqli_close($conn);
 	</style>
 	</head>
 	<body>
-        
+            <!-- Your HTML content -->
+        <div id="opdPercentage" style="display: none;"><?php echo $OPDpercentage; ?></div>
+        <div id="ipdPercentage" style="display: none;"><?php echo $IPDPercentage; ?></div>
+        <div id="erPercentage" style="display: none;"><?php echo $ERPercentage; ?></div>
 		<div class="graph-container">
             <!-- FOR METER OPD  -->
 			<div class="meter-graph1">
@@ -357,36 +379,38 @@ mysqli_close($conn);
         ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
         erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
 
-function generateArrow() {
-    console.log("arrow updated")
 
-    // Remove existing arrows if they exist
-    var existingArrows = document.querySelectorAll('.arrow');
-    existingArrows.forEach(function(arrow) {
-        arrow.remove();
-    });
 
-    // Calculate arrow position for OPD
-    var opdArrowPosition = <?php echo $OPDpercentage; ?>;
-    var opdArrow = document.createElement('div');
-    opdArrow.classList.add('arrow');
-    document.querySelector('.meter-graph1').appendChild(opdArrow);
-    opdArrow.style.transform = `translate(-50%, 0) rotate(${opdArrowPosition * 1.8 - 90}deg)`;
+        function generateArrow(OPDpercentage, IPDPercentage, ERPercentage) {
+            console.log("OPD Percentage: ", OPDpercentage);
+            console.log("IPD Percentage: ", IPDPercentage);
+            console.log("ER Percentage: ", ERPercentage);
+            
+            // Remove existing arrows if they exist
+            var existingArrows = document.querySelectorAll('.arrow');
+            existingArrows.forEach(function(arrow) {
+                arrow.remove();
+            });
 
-    // Calculate arrow position for IPD
-    var ipdArrowPosition = <?php echo $IPDPercentage; ?>;
-    var ipdArrow = document.createElement('div');
-    ipdArrow.classList.add('arrow');
-    document.querySelector('.meter-graph2').appendChild(ipdArrow);
-    ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
+            // Calculate arrow position for OPD
+            var opdArrow = document.createElement('div');
+            opdArrow.classList.add('arrow');
+            document.querySelector('.meter-graph1').appendChild(opdArrow);
+            opdArrow.style.transform = `translate(-50%, 0) rotate(${OPDpercentage * 1.8 - 90}deg)`;
 
-    // Calculate arrow position for ER
-    var erArrowPosition = <?php echo $ERPercentage; ?>;
-    var erArrow = document.createElement('div');
-    erArrow.classList.add('arrow');
-    document.querySelector('.meter-graph3').appendChild(erArrow);
-    erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
-}
+            // Calculate arrow position for IPD
+            var ipdArrow = document.createElement('div');
+            ipdArrow.classList.add('arrow');
+            document.querySelector('.meter-graph2').appendChild(ipdArrow);
+            ipdArrow.style.transform = `translate(-50%, 0) rotate(${IPDPercentage * 1.8 - 90}deg)`;
+
+            // Calculate arrow position for ER
+            var erArrow = document.createElement('div');
+            erArrow.classList.add('arrow');
+            document.querySelector('.meter-graph3').appendChild(erArrow);
+            erArrow.style.transform = `translate(-50%, 0) rotate(${ERPercentage * 1.8 - 90}deg)`;
+        }
+        
     </script>
 	</body>
 	</html>
