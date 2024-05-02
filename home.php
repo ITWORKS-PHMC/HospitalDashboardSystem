@@ -26,7 +26,7 @@ function loadContent(url) {
 <div class="navigation-bar">
   <div class="header-content">
     <div class="header-title">
-      <h1>Hospital Dashboard by Ed and Floyd</h1>
+      <h1>Hospital Dashboard</h1>
     </div>
   </div>
 </div>
