@@ -54,7 +54,8 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     </div>
 </div>
 
-<div class="numbers">
+<div class="dashboard-content">
+    <div class ="Number-box">
     <div class="boxtotalpatient">
     <p class="boxtitle1">Total Patient</p>
     <div id = "boxtotalpatient" >
@@ -67,19 +68,19 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         <?php include 'totalbed.php'; ?>
     </div>
     </div>
-    <div class="boxgraph">
-        <!-- Container to load donut.php content -->
-        <div id="donutContainer">
-            <?php include 'donut.php'; ?>
-        </div>
     </div>
-</div>
-
-<div class="graphs-bottom">
+    <div class="line-graphs-container">
     <div class="line-graph">
         <?php include 'TotalPatientGraph.php'; ?>
     </div>
+    </div>
+        <!-- Container to load donut.php content -->
+        <div id="donutContainer">
+            <?php include 'donut.php'; ?>
+    </div>
 </div>
+
+
 
 <!-- JavaScript for AJAX -->
 <script>
@@ -148,7 +149,4 @@ function updateTotalIPD(selectedYear, selectedMonth) {
 </script>
 </body>
 </html>
-<?php
-// Close connection
-$conn->close();
-?>
+
