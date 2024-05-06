@@ -1,5 +1,6 @@
-        <?php
+<?php
 require 'connection.php';
+
 // Check if selected_year and selected_month are set in the URL parameters
 $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('Y');
 $selected_month = isset($_GET['selected_month']) ? $_GET['selected_month'] : date('m');
@@ -20,14 +21,16 @@ if ($result->num_rows > 0) {
     $totalIPD = $row["totalcensus_id"];
 
     // SQL query to get the target value for the selected year and month
-    $sql2 = "SELECT SUM(target_value) as totaltarget FROM dashboard_target";
+    $sql2 = "SELECT SUM(target_value) as totaltarget 
+             FROM dashboard_target 
+             WHERE target_type = 'IPD'";
     $result2 = $conn->query($sql2);
 
     if ($result2->num_rows > 0) {
         // Fetch the target value
         $row2 = $result2->fetch_assoc();
         $totalTarget = $row2["totaltarget"];
-        echo "<div class='result'>$totalIPD/3000</div>";
+        echo "<div class='result'>$totalIPD/$totalTarget</div>";
     } else {
         echo "No target set for the selected year and month";
     }

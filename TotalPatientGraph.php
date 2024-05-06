@@ -64,12 +64,12 @@ if ($result_chart2->num_rows > 0) {
 <body>
 <div class="charts-container" style=" width: 100%;height: 150px;left: 380px; bottom: 400px;position:relative;">
 <div class="chart-1">
-<div id="chartContainer2" style="height: 370px; width: 1050px;"></div>
+<div id="chartContainer2" style="height: 390px; width: 1050px;"></div>
 </div></div>
 <br>
 <div class="chart2-container" style=" width: 100%;height: 150px;left: 10px; bottom: 170px;position:relative;">
 <div class="chart-2">
-<div id="chartContainer" style="height: 360px; width: 1420px;"></div>
+<div id="chartContainer" style="height: 350px; width: 1420px;"></div>
 </div>
 </div>
 
