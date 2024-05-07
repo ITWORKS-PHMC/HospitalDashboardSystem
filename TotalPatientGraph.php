@@ -2,9 +2,9 @@
 require 'connection.php';
 
 // Fetch data from the database
-$sql = "SELECT YEAR(transaction_date) AS year, MONTH(transaction_date) AS month, COUNT(census_id) AS total 
-        FROM dashboard_census 
-        GROUP BY YEAR(transaction_date), MONTH(transaction_date)";
+$sql = "SELECT YEAR(census_date_admitted) AS year, MONTH(census_date_admitted) AS month, COUNT(census_transaction_id) AS total 
+        FROM dashboard_database
+        GROUP BY YEAR(census_date_admitted), MONTH(census_date_admitted)";
 $result = mysqli_query($conn, $sql);
 
 $years = array();
@@ -28,12 +28,12 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 // Query to fetch data for chart 2 (yearly data for OPD, IPD, and ER)
-$sql_chart2 = "SELECT YEAR(transaction_date) AS year,
-                      SUM(CASE WHEN patient_transaction_type = 'OPD' THEN 1 ELSE 0 END) AS total_opd,
-                      SUM(CASE WHEN patient_transaction_type = 'IPD' THEN 1 ELSE 0 END) AS total_ipd,
-                      SUM(CASE WHEN patient_transaction_type = 'ER' THEN 1 ELSE 0 END) AS total_er
-               FROM dashboard_census
-               GROUP BY YEAR(transaction_date)";
+$sql_chart2 = "SELECT YEAR(census_date_admitted) AS year,
+                      SUM(CASE WHEN census_transaction_type = 'O' THEN 1 ELSE 0 END) AS total_opd,
+                      SUM(CASE WHEN census_transaction_type = 'I' THEN 1 ELSE 0 END) AS total_ipd,
+                      SUM(CASE WHEN census_transaction_type = 'E' THEN 1 ELSE 0 END) AS total_er
+               FROM dashboard_database
+               GROUP BY YEAR(census_date_admitted)";
 
 $result_chart2 = $conn->query($sql_chart2);
 
