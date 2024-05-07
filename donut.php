@@ -1,6 +1,5 @@
 <?php
 require 'connection.php';
-
 // Get selected year and month from URL parameters
 if(isset($_GET['selected_year']) && isset($_GET['selected_month'])) {
     $selected_year = $_GET['selected_year'];
@@ -10,19 +9,18 @@ if(isset($_GET['selected_year']) && isset($_GET['selected_month'])) {
     $selected_year = date('Y');
     $selected_month = date('m');
 }
-
 // Assuming 'dashboard_census' is your table name
-$sql = "SELECT COUNT(census_id) AS getOPD FROM dashboard_census WHERE patient_transaction_type = 'OPD' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET OPD 
+$sql = "SELECT COUNT(census_transaction_id) AS getOPD FROM dashboard_database WHERE census_transaction_type = 'O' AND MONTH(census_date_admitted) = '$selected_month' AND YEAR(census_date_admitted) = '$selected_year'"; // GET OPD 
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $totalOPDCensus = $row['getOPD'];
 
-$sql2 = "SELECT COUNT(census_id) AS getIPD FROM dashboard_census WHERE patient_transaction_type = 'IPD' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET IPD
+$sql2 = "SELECT COUNT(census_transaction_id) AS getIPD FROM dashboard_database WHERE census_transaction_type = 'I' AND MONTH(census_date_admitted) = '$selected_month' AND YEAR(census_date_admitted) = '$selected_year'"; // GET IPD
 $result2 = mysqli_query($conn, $sql2);
 $row2 = mysqli_fetch_assoc($result2);
 $totalIPDCensus = $row2['getIPD'];
 
-$sql3 = "SELECT COUNT(census_id) AS getER FROM dashboard_census WHERE patient_transaction_type = 'ER' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET ER
+$sql3 = "SELECT COUNT(census_transaction_id) AS getER FROM dashboard_database WHERE census_transaction_type = 'E' AND MONTH(census_date_admitted) = '$selected_month' AND YEAR(census_date_admitted) = '$selected_year'"; // GET ER
 $result3 = mysqli_query($conn, $sql3);
 $row3 = mysqli_fetch_assoc($result3);
 $totalERCensus = $row3['getER'];
@@ -33,39 +31,25 @@ $getOPD = mysqli_query($conn, $sqlTvalueOPD);
 if ($getOPD) {
 
     $value1 = mysqli_fetch_assoc($getOPD);
-
-
-    if ($value1) {
-
+   if ($value1) {
         $TValueOPD = $value1['target_value'];
-
     } else {
-
         echo "No data found for target_type = 'OPD'";
     }
 } else {
-
     echo "Error: " . mysqli_error($conn);
 }
-
 $sqlTvalueIPD = "SELECT * FROM dashboard_target WHERE target_type ='IPD'";
 $getIPD = mysqli_query($conn, $sqlTvalueIPD);
 
 if ($getIPD) {
-
     $value1 = mysqli_fetch_assoc($getIPD);
-
-
     if ($value1) {
-
         $TValueIPD = $value1['target_value'];
-
     } else {
-
         echo "No data found for target_type = 'IPD'";
     }
 } else {
-
     echo "Error: " . mysqli_error($conn);
 }
 
@@ -73,25 +57,18 @@ $sqlTvalueER = "SELECT * FROM dashboard_target WHERE target_type ='ER'";
 $getER = mysqli_query($conn, $sqlTvalueER);
 
 if ($getER) {
-
     $value1 = mysqli_fetch_assoc($getER);
-
-
     if ($value1) {
-
         $TValueER = $value1['target_value'];
 
     } else {
-
         echo "No data found for target_type = 'ER'";
     }
 } else {
-
     echo "Error: " . mysqli_error($conn);
 }
 
 // Assuming 'dashboard_target' is your table name for target values
-
 // Check if the target value for OPD is available
 if (isset($TValueOPD) && $TValueOPD != 0) {
     $OPDpercentage = round($totalOPDCensus /  $TValueOPD * 100);
@@ -102,6 +79,7 @@ if (isset($TValueOPD) && $TValueOPD != 0) {
 // Check if the target value for IPD is available
 if (isset($TValueIPD) && $TValueIPD != 0) {
     $IPDPercentage = round($totalIPDCensus / $TValueIPD * 100);
+
 } else {
     $IPDPercentage = 0; // or any default value you prefer
 }
@@ -412,13 +390,11 @@ mysqli_close($conn);
         ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
         erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
 
-
-
-        function generateArrow(OPDpercentage, IPDPercentage, ERPercentage) {
+          function generateArrow(OPDpercentage, IPDPercentage, ERPercentage) {
             console.log("OPD Percentage: ", OPDpercentage);
             console.log("IPD Percentage: ", IPDPercentage);
             console.log("ER Percentage: ", ERPercentage);
-            
+
             // Remove existing arrows if they exist
             var existingArrows = document.querySelectorAll('.arrow');
             existingArrows.forEach(function(arrow) {
