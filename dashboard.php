@@ -2,7 +2,7 @@
 require 'connection.php';
 
 // Fetch distinct years from the dashboard_census table
-$yearQuery = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
+$yearQuery = "SELECT DISTINCT YEAR(census_date_admitted) AS year FROM dashboard_database";
 $yearResult = mysqli_query($conn, $yearQuery);
 
 // Get selected month from the URL parameter
@@ -84,19 +84,16 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 
 <!-- JavaScript for AJAX -->
 <script>
-// Function to update the content of donut.php using AJAX
 function updateDonut(selectedYear, selectedMonth) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             // Update donutContainer with the new content
             document.getElementById("donutContainer").innerHTML = this.responseText;
-
             // Extract updated percentages from the response content
             var opdpercentage = parseFloat(document.getElementById("opdPercentage").innerText);
             var ipdPercentage = parseFloat(document.getElementById("ipdPercentage").innerText);
             var erPercentage = parseFloat(document.getElementById("erPercentage").innerText);
-
             // Call generateArrow() with updated data after content is updated
             generateArrow(opdpercentage, ipdPercentage, erPercentage);
         }
@@ -104,7 +101,6 @@ function updateDonut(selectedYear, selectedMonth) {
     xhttp.open("GET", "donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send(); 
 }
-
     // Function to handle year selection change without refreshing the page
     document.getElementById("yearDropdown").addEventListener("change", function() {
         var selectedYear = this.value;
@@ -113,7 +109,6 @@ function updateDonut(selectedYear, selectedMonth) {
         updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
         updateTotalIPD(selectedYear, selectedMonth); // Call to update IPD
     });
-
     // Function to handle month selection change without refreshing the page
     document.getElementById("monthFilter").addEventListener("change", function() {
         var selectedYear = document.getElementById("yearDropdown").value;
@@ -122,7 +117,6 @@ function updateDonut(selectedYear, selectedMonth) {
         updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
         updateTotalIPD(selectedYear, selectedMonth); // Call to update IPD
     });
-
 // Function to update the total patient count using AJAX
 function updateTotalPatients(selectedYear, selectedMonth) {
     var xhttp = new XMLHttpRequest();
@@ -134,7 +128,6 @@ function updateTotalPatients(selectedYear, selectedMonth) {
     xhttp.open("GET", "totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send();
 }
-
 // Function to update the total IPD count using AJAX
 function updateTotalIPD(selectedYear, selectedMonth) {
     var xhttp = new XMLHttpRequest();
