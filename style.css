@@ -1,44 +1,6 @@
 /* STYLES */
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
-/* /----------- navbar.php -------------/
-/------- navbar style -------/ */
-.navigation-bar {
-  height: 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.header-title {
-  width: 100%;
-  color: black;
-}
-
-.header-sections {
-  display: flex;
-  justify-content: flex-end;
-  margin-left: 60%;
-}
-
-.nav-link {
-  margin-left: 20px;
-  text-decoration: none;
-  color: black;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-.nav-link:hover {
-  color: rgba(90, 84, 72, 0.842); /* Change color on hover */
-}
-
 /* DASHBOARD BUTTON */
 .header {
   display: flex;
@@ -61,7 +23,6 @@ h1 {
 /*GRAPHS*/
 .dashboard-content {
   flex-direction: column;
-  margin-top: 50px;
   width: 500px;
 }
 .line-graphs-container {
@@ -301,4 +262,18 @@ h1 {
 }
 body {
   background-color: #ececec;
+}
+
+.Meter-container {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: rgb(255, 255, 255);
+  position: relative;
+  width: 1320px;
+  padding: 60px;
+  margin: 10px;
+  height: 270px;
+}
+.Number-box {
+  position: relative;
 }

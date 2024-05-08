@@ -17,7 +17,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>  
-    <?php include("home.php")?>
+    <?php include("./lib/nav-bar.php")?>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -53,30 +53,32 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         </form>
     </div>
 </div>
-
 <div class="dashboard-content">
-    <div class ="Number-box">
-    <div class="boxtotalpatient">
-    <p class="boxtitle1">Total Patient</p>
-    <div id = "boxtotalpatient" >
-        <?php include 'totalpatient.php'; ?>
-    </div>
-    </div>
-    <div class="boxtotalbed">
-        <p class="boxtitle">Total Beds vs Census</p>
-        <div id="boxtotalIPD">
-        <?php include 'totalbed.php'; ?>
-    </div>
-    </div>
-    </div>
-    <div class="line-graphs-container">
-    <div class="line-graph">
-        <?php include 'TotalPatientGraph.php'; ?>
-    </div>
-    </div>
-        <!-- Container to load donut.php content -->
-        <div id="donutContainer">
-            <?php include 'donut.php'; ?>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 20px;">
+        <div class="Number-box" style="grid-column: 1 / 2;">
+            <div class="boxtotalpatient">
+                <p class="boxtitle1">Total Patient</p>
+                <div id="boxtotalpatient">
+                    <?php include 'totalpatient.php'; ?>
+                </div>
+            </div>
+            <div class="boxtotalbed">
+                <p class="boxtitle">Total Beds vs Census</p>
+                <div id="boxtotalIPD">
+                    <?php include 'totalbed.php'; ?>
+                </div>
+            </div>
+        </div>
+        <div class="Meter-container" style="grid-column: 2 / 3;">
+            <div id="donutContainer">
+                <?php include 'donut.php'; ?>
+            </div>
+        </div>
+        <div class="line-graphs-container" style="grid-column: 1 / 3;">
+            <div class="line-graph">
+                <?php include 'TotalPatientGraph.php'; ?>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -62,14 +62,12 @@ if ($result_chart2->num_rows > 0) {
 <script src="lib/graphs.js"></script>
 </head>
 <body>
-<div class="charts-container" style=" width: 100%;height: 150px;left: 380px; bottom: 400px;position:relative;">
-<div class="chart-1">
-<div id="chartContainer2" style="height: 390px; width: 1050px;"></div>
-</div></div>
-<br>
-<div class="chart2-container" style=" width: 100%;height: 150px;left: 10px; bottom: 170px;position:relative;">
-<div class="chart-2">
-<div id="chartContainer" style="height: 350px; width: 1420px;"></div>
+<div class="charts-container" style="display: flex;">
+<div class="chart-1" style="flex: 1; margin-right: 10px;">
+<div id="chartContainer" style="height: 370px; width: 1200px;"></div>
+</div>
+<div class="chart-2" style="flex: 1; margin-left: 10px;">
+<div id="chartContainer2" style="height: 370px; width: 610px;"></div>
 </div>
 </div>
 
@@ -151,7 +149,7 @@ var chart2 = new CanvasJS.Chart("chartContainer2", {
             showInLegend: true,
             color: "green",
             dataPoints: dataPoints_er
-        }
+        },
     ]
 });
 

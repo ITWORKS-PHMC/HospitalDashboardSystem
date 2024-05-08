@@ -103,192 +103,159 @@ mysqli_close($conn);
     <style>
 /* STYLES FOR 3 METER GRAPHS */
 .multi-graph {
-  width: 300px;
-  height: 150px;
-  position: relative;
-  color: #fff;
-  font-size: 22px;
-  font-weight: 600;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.multi-graph:before {
-  content: "";
-  width: 300px;
-  height: 150px;
-  border: 50px solid rgba(0, 0, 0, 0.15);
-  border-bottom: none;
-  position: absolute;
-  box-sizing: border-box;
-  transform-origin: 50% 0%;
-  border-radius: 300px 300px 0 0;
-  left: 0;
-  top: 0;
-}
-.graph {
-  width: 300px;
-  height: 150px;
-  border: 50px solid var(--fill);
-  border-top: none;
-  position: absolute;
-  transform-origin: 50% 0% 0;
-  border-radius: 0 0 300px 300px;
-  left: 0;
-  top: 100%;
-  z-index: 5;
-  animation: 1s fillGraphAnimation ease-in;
-  transform: rotate(calc(1deg * (var(--percentage) * 1.8)));
-  box-sizing: border-box;
-  cursor: pointer;
-}
-.graph:after {
-  content: attr(data-name) " " counter(varible) "%";
-  counter-reset: varible var(--percentage);
-  background: var(--fill);
-  box-sizing: border-box;
-  border-radius: 2px;
-  color: #fff;
-  font-weight: 200;
-  font-size: 12px;
-  height: 20px;
-  padding: 3px 5px;
-  top: 0px;
-  position: absolute;
-  left: 0;
-  transform: rotate(calc(-1deg * var(--percentage) * 1.8)) translate(-30px, 0px);
-  transition: 0.2s ease-in;
-  transform-origin: 0 50% 0;
-  opacity: 0;
-}
+            width: 400px; /* Adjust width as needed */
+    height: 200px; /* Adjust height as needed */
+            position: relative;
+            color: #fff;
+            font-size: 22px;
+            font-weight: 600;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .multi-graph:before {
+            content: '';
+            width: 400px; /* Adjust width as needed */
+    height: 200px; /* Adjust height as needed */
+            border: 50px solid rgba(0, 0, 0, .15);
+            border-bottom: none;
+            position: absolute;
+            box-sizing: border-box;
+            transform-origin: 50% 0%;
+            border-radius: 300px 300px 0 0;
+            left: 0;
+            top: 0;
+        }
+        .graph {
+            width: 400px; /* Adjust width as needed */
+    height: 200px; /* Adjust height as needed */
+            border: 50px solid var(--fill);
+            border-top: none;
+            position: absolute;
+            transform-origin: 50% 0% 0;
+            border-radius: 0 0 300px 300px;
+            left: 0; 
+            top: 100%;
+            z-index: 5;
+            animation: 1s fillGraphAnimation ease-in;
+            transform: rotate(calc(1deg * (var(--percentage) * 1.8)));
+            box-sizing: border-box;
+            cursor: pointer;
+            
+        }
+        .graph:after {
+            content: attr(data-name) ' ' counter(varible) '%';
+            counter-reset: varible var(--percentage);
+            background: var(--fill);
+            box-sizing: border-box;
+            border-radius: 2px;
+            color: #fff;
+            font-weight: 200;
+            font-size: 12px;
+            height: 20px;
+            padding: 3px 5px;
+            top: 0px;
+            position: absolute;
+            left: 0;
+            transform: rotate(calc(-1deg * var(--percentage) * 1.8)) translate(-30px, 0px);
+            transition: 0.2s ease-in;
+            transform-origin: 0 50% 0;
+            opacity: 0;
+        }
 .graph:not(.opd):hover:after {
-  opacity: 0;
+    opacity: 0;
 }
 .graph.opd:hover:after {
-  opacity: 1;
-  left: 30px;
-  color: #000000;
+    opacity: 1;
+    left: 30px;
+    color:#000000;
 }
 .graph.ipd:hover:after {
-  opacity: 1;
-  left: 30px;
-  color: #000000;
+    opacity: 1;
+    left: 30px;
+    color:#000000;
 }
 .graph.er:hover:after {
-  opacity: 1;
-  left: 30px;
-  color: #000000;
+    opacity: 1;
+    left: 30px;
+    color:#000000;
 }
-
-@keyframes fillAnimation {
-  0% {
-    transform: rotate(-45deg);
-  }
-  50% {
-    transform: rotate(135deg);
-  }
+@keyframes fillAnimation{
+  0%{transform : rotate(-45deg);}
+  50%{transform: rotate(135deg);}
 }
-
-@keyframes fillGraphAnimation {
-  0% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(180deg);
-  }
+@keyframes fillGraphAnimation{
+  0%{transform: rotate(0deg);}
+  50%{transform: rotate(180deg);}
 }
-.label {
-  color: black;
-  font-size: 12px;
-  font-weight: bold;
-  position: absolute;
-}
-
-.label.left {
-  left: 60px;
-  top: 213px;
-  transform: translate(-50%, -50%);
-}
-
-.label.top {
-  top: 120px;
-  left: 150px;
-  transform: translateX(-50%);
-}
-
-.label.right {
-  right: 67px;
-  top: 210px;
-  transform: translate(50%, -50%);
-}
-.label.halfright {
-  right: 89px;
-  top: 155px;
-  transform: translate(50%, -50%);
-}
-.label.halfleft {
-  left: 90px;
-  top: 155px;
-  transform: translate(-50%, -50%);
-}
-
-.meter-graph1 {
-  position: relative;
-  left: 0;
-  top: 80px;
-  transform: translateY(-50%);
-}
-
-.meter-graph2 {
-  position: relative;
-  left: 50%;
-  top: 120px;
-  transform: translate(-50%, -50%);
-}
-
-.meter-graph3 {
-  position: relative;
-  right: 0;
-  top: 160px;
-  transform: translateY(-50%);
-}
-.arrow {
-  position: absolute;
-  width: 3px;
-  height: 60px;
-  background-color: black;
-  top: 150px;
-  left: 50%;
-  transform-origin: bottom center;
-}
-.chart-label {
-  text-align: center;
-}
-.meter-graph {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  background-color: white;
-  position: absolute;
-  width: 300px;
-  padding: 60px;
-  margin: 10px;
-  height: 650px;
-  bottom: 1px;
-  right: 20px;
-}
-.graph-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 50px;
-}
-    
+		.label {
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+            position: absolute;
+        }
+        .label.left {
+            left: 65px;
+            top: 264px;
+            transform: translate(-50%, -50%);
+        }
+        .label.top {
+            top: 120px;
+            left: 200px;
+            transform: translateX(-50%);
+        }
+        .label.right {
+            right: 66px;
+            top: 264px;
+            transform: translate(50%, -50%);
+        }
+        .label.halfright {
+            right: 105px;
+            top: 168px;
+            transform: translate(50%, -50%);
+        }
+        .label.halfleft {
+            left: 107px;
+            top: 167px;
+            transform: translate(-50%, -50%);
+        }
+        .meter-graph1 {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .meter-graph2 {
+            position:  absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .meter-graph3 {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .arrow {
+            position: absolute;
+            font-size: 16px;
+            width: 3px; 
+            height: 120px;
+            background-color: black;
+            top: 145px;
+            left: 50%;
+            transform-origin: bottom center;
+        }
+        .chart-label{
+            text-align: center;
+        }
+    .meter-graph{
+      width: 500px;
+      
+    }
     </style>
 	<body>
             <!-- Your HTML content -->
@@ -297,7 +264,7 @@ mysqli_close($conn);
         <div id="erPercentage" style="display: none;"><?php echo $ERPercentage; ?></div>
 		<div class="graph-container">
             <!-- FOR METER OPD  -->
-            <div class="meter-graph">
+            <div class="meter-graph" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;">
 			<div class="meter-graph1">
 				<div class="label left">0%</div>
 				<div class="label halfleft">25%</div>
