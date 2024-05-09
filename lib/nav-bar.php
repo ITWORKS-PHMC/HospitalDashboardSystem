@@ -12,14 +12,14 @@
             color: #27b339 !important;
         }
         body {
-  width: 100vw !important;
-  margin-top: 20px !important;
-  margin: 0 auto !important;
-  font-family: "Roboto", sans-serif !important;
-  background-color: #f5f5f5 !important;
-  overflow-x: hidden;
+        width: 100vw !important;
+        margin-top: 20px !important;
+        margin: 0 auto !important;
+        font-family: "Roboto", sans-serif !important;
+        background-color: #f5f5f5 !important;
+        overflow-x: hidden;
 }
-.navigation-bar {
+    .navigation-bar {
         width: 100% !important;
         height: 60px !important;
         display: flex !important;
@@ -81,7 +81,7 @@
     </div>
     <div class="header-sections">
       <a href="dashboard.php" class="nav-link" onclick="highlightLink(this)">Census</a>
-      <a href="revenue.php" class="nav-link" onclick="highlightLink(this)">Revenue</a>
+      <a href="revenue-dashboard.php" class="nav-link" onclick="highlightLink(this)">Revenue</a>
     </div>
   </div>
 </div>

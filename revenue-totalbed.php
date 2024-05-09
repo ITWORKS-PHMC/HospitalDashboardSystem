@@ -6,11 +6,11 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 $selected_month = isset($_GET['selected_month']) ? $_GET['selected_month'] : date('m');
 
 // SQL query to count total Inpatient Department (IPD) IDs for the selected year and month
-$sql = "SELECT COUNT(total_census) as totalcensus_id 
-        FROM dashboard_census 
-        WHERE YEAR(transaction_date) = $selected_year 
-        AND MONTH(transaction_date) = $selected_month
-        AND patient_transaction_type = 'I'";
+$sql = "SELECT COUNT(census_transaction_id) as totalcensus_id 
+        FROM dashboard_database 
+        WHERE YEAR(census_date_admitted) = $selected_year 
+        AND MONTH(census_date_admitted) = $selected_month
+        AND census_transaction_type = 'I'";
 
 $result = $conn->query($sql);
 

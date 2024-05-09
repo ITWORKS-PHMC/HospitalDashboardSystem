@@ -1,5 +1,6 @@
 <?php
 require 'connection.php';
+
 // Get selected year and month from URL parameters
 if(isset($_GET['selected_year']) && isset($_GET['selected_month'])) {
     $selected_year = $_GET['selected_year'];
@@ -9,29 +10,30 @@ if(isset($_GET['selected_year']) && isset($_GET['selected_month'])) {
     $selected_year = date('Y');
     $selected_month = date('m');
 }
+
 // Assuming 'dashboard_census' is your table name
-$sql = "SELECT COUNT(census_transaction_id) AS getOPD FROM dashboard_database WHERE census_transaction_type = 'O' AND MONTH(census_date_admitted) = '$selected_month' AND YEAR(census_date_admitted) = '$selected_year'"; // GET OPD 
+$sql = "SELECT SUM(total_census) AS totalOPD FROM dashboard_census WHERE patient_transaction_type = 'O' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET OPD 
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
-$totalOPDCensus = $row['getOPD'];
+$totalOPDCensus = $row['totalOPD'];
 
-$sql2 = "SELECT COUNT(census_transaction_id) AS getIPD FROM dashboard_database WHERE census_transaction_type = 'I' AND MONTH(census_date_admitted) = '$selected_month' AND YEAR(census_date_admitted) = '$selected_year'"; // GET IPD
+$sql2 = "SELECT SUM(total_census) AS totalIPD FROM dashboard_census WHERE patient_transaction_type = 'I' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET IPD
 $result2 = mysqli_query($conn, $sql2);
 $row2 = mysqli_fetch_assoc($result2);
-$totalIPDCensus = $row2['getIPD'];
+$totalIPDCensus = $row2['totalIPD'];
 
-$sql3 = "SELECT COUNT(census_transaction_id) AS getER FROM dashboard_database WHERE census_transaction_type = 'E' AND MONTH(census_date_admitted) = '$selected_month' AND YEAR(census_date_admitted) = '$selected_year'"; // GET ER
+$sql3 = "SELECT SUM(total_census) AS totalER FROM dashboard_census WHERE patient_transaction_type = 'E' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET ER
 $result3 = mysqli_query($conn, $sql3);
 $row3 = mysqli_fetch_assoc($result3);
-$totalERCensus = $row3['getER'];
+$totalERCensus = $row3['totalER'];
 
+// Assuming 'dashboard_target' is your table name for target values
 $sqlTvalueOPD = "SELECT * FROM dashboard_target WHERE target_type ='OPD'";
 $getOPD = mysqli_query($conn, $sqlTvalueOPD);
 
 if ($getOPD) {
-
     $value1 = mysqli_fetch_assoc($getOPD);
-   if ($value1) {
+    if ($value1) {
         $TValueOPD = $value1['target_value'];
     } else {
         echo "No data found for target_type = 'OPD'";
@@ -39,6 +41,7 @@ if ($getOPD) {
 } else {
     echo "Error: " . mysqli_error($conn);
 }
+
 $sqlTvalueIPD = "SELECT * FROM dashboard_target WHERE target_type ='IPD'";
 $getIPD = mysqli_query($conn, $sqlTvalueIPD);
 
@@ -60,7 +63,6 @@ if ($getER) {
     $value1 = mysqli_fetch_assoc($getER);
     if ($value1) {
         $TValueER = $value1['target_value'];
-
     } else {
         echo "No data found for target_type = 'ER'";
     }
@@ -92,6 +94,7 @@ if (isset($TValueER) && $TValueER != 0) {
 }
 
 mysqli_close($conn);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -103,8 +106,8 @@ mysqli_close($conn);
     <style>
 /* STYLES FOR 3 METER GRAPHS */
 .multi-graph {
-            width: 400px; /* Adjust width as needed */
-    height: 200px; /* Adjust height as needed */
+            width: 350px; /* Adjust width as needed */
+    height: 175px; /* Adjust height as needed */
             position: relative;
             color: #fff;
             font-size: 22px;
@@ -117,8 +120,8 @@ mysqli_close($conn);
         }
         .multi-graph:before {
             content: '';
-            width: 400px; /* Adjust width as needed */
-    height: 200px; /* Adjust height as needed */
+            width: 350px; /* Adjust width as needed */
+    height: 175px; /* Adjust height as needed */
             border: 50px solid rgba(0, 0, 0, .15);
             border-bottom: none;
             position: absolute;
@@ -129,8 +132,8 @@ mysqli_close($conn);
             top: 0;
         }
         .graph {
-            width: 400px; /* Adjust width as needed */
-    height: 200px; /* Adjust height as needed */
+            width: 350px; /* Adjust width as needed */
+    height: 175px; /* Adjust height as needed */
             border: 50px solid var(--fill);
             border-top: none;
             position: absolute;
@@ -197,27 +200,27 @@ mysqli_close($conn);
             position: absolute;
         }
         .label.left {
-            left: 65px;
-            top: 264px;
+            left: 60px;
+            top: 240px;
             transform: translate(-50%, -50%);
         }
         .label.top {
             top: 120px;
-            left: 200px;
+            left: 175px;
             transform: translateX(-50%);
         }
         .label.right {
-            right: 66px;
-            top: 264px;
+            right: 65px;
+            top: 240px;
             transform: translate(50%, -50%);
         }
         .label.halfright {
-            right: 105px;
-            top: 168px;
+            right: 83px;
+            top: 177px;
             transform: translate(50%, -50%);
         }
         .label.halfleft {
-            left: 107px;
+            left: 93px;
             top: 167px;
             transform: translate(-50%, -50%);
         }
@@ -226,6 +229,7 @@ mysqli_close($conn);
             left: 0;
             top: 50%;
             transform: translateY(-50%);
+            margin-left: 30px;
         }
         .meter-graph2 {
             position:  absolute;
@@ -238,12 +242,13 @@ mysqli_close($conn);
             right: 0;
             top: 50%;
             transform: translateY(-50%);
+            margin-right: 30px;
         }
         .arrow {
             position: absolute;
             font-size: 16px;
             width: 3px; 
-            height: 120px;
+            height: 100px;
             background-color: black;
             top: 145px;
             left: 50%;

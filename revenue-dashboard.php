@@ -2,7 +2,7 @@
 require 'connection.php';
 
 // Fetch distinct years from the dashboard_census table
-$yearQuery = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
+$yearQuery = "SELECT DISTINCT YEAR(census_date_admitted) AS year FROM dashboard_database";
 $yearResult = mysqli_query($conn, $yearQuery);
 
 // Get selected month from the URL parameter
@@ -24,7 +24,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
    <div class="header" style="height:50px;">
     <div class="button" style="margin-left: auto;">
         <!-- Year dropdown form -->
-        <form id="YearForm" action="dashboard.php" method="GET">
+        <form id="YearForm" action="revenue-dashboard.php" method="GET">
             <select class="Filter-button" id="yearDropdown" name="selected_year" >
                 <?php
                 while ($yearRow = mysqli_fetch_assoc($yearResult)) {
@@ -59,24 +59,24 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
             <div class="boxtotalpatient">
                 <p class="boxtitle1">Total Patient</p>
                 <div id="boxtotalpatient">
-                    <?php include 'totalpatient.php'; ?>
+                    <?php include 'revenue-totalpatient.php'; ?>
                 </div>
             </div>
             <div class="boxtotalbed">
                 <p class="boxtitle">Total Beds vs Census</p>
                 <div id="boxtotalIPD">
-                    <?php include 'totalbed.php'; ?>
+                    <?php include 'revenue-totalbed.php'; ?>
                 </div>
             </div>
         </div>
         <div class="Meter-container" style="grid-column: 2 / 3;">
             <div id="donutContainer">
-                <?php include 'donut.php'; ?>
+                <?php include 'revenue-donut.php'; ?>
             </div>
         </div>
         <div class="line-graphs-container" style="grid-column: 1 / 3;">
             <div class="line-graph">
-                <?php include 'TotalPatientGraph.php'; ?>
+                <?php include 'revenue-TotalPatientGraph.php'; ?>
             </div>
         </div>
     </div>
@@ -100,7 +100,7 @@ function updateDonut(selectedYear, selectedMonth) {
             generateArrow(opdpercentage, ipdPercentage, erPercentage);
         }
     };
-    xhttp.open("GET", "donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
+    xhttp.open("GET", "revenue-donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send(); 
 }
     // Function to handle year selection change without refreshing the page
@@ -127,7 +127,7 @@ function updateTotalPatients(selectedYear, selectedMonth) {
             document.getElementById("boxtotalpatient").innerHTML = this.responseText;
         }
     };
-    xhttp.open("GET", "totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
+    xhttp.open("GET", "revenue-totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send();
 }
 // Function to update the total IPD count using AJAX
@@ -138,7 +138,7 @@ function updateTotalIPD(selectedYear, selectedMonth) {
             document.getElementById("boxtotalIPD").innerHTML = this.responseText;
         }
     };
-    xhttp.open("GET", "totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
+    xhttp.open("GET", "revenue-totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send();
 }
 </script>
