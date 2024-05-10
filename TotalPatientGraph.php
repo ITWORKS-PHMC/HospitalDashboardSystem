@@ -60,15 +60,15 @@ if ($result_chart2->num_rows > 0) {
 <!DOCTYPE HTML>
 <html>
 <head>
-<script src="lib/graphs.js"></script>
+<script src="./lib/graphs.js"></script>
 </head>
 <body>
 <div class="charts-container" style="display: flex;">
 <div class="chart-1" style="flex: 1; margin-right: 10px;">
-<div id="chartContainer" style="height: 370px; width: 1200px;"></div>
+<div id="chartContainer" style="height: 370px; width: 1220px;box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1); border-radius: 8px;"></div>
 </div>
 <div class="chart-2" style="flex: 1; margin-left: 10px;">
-<div id="chartContainer2" style="height: 370px; width: 610px;"></div>
+<div id="chartContainer2" style="height: 370px; width: 620px;box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1); border-radius: 8px;"></div>
 </div>
 </div>
 
@@ -90,6 +90,7 @@ window.onload = function () {
             title: "Number of Total Patient",
             includeZero: false,
         },
+        backgroundColor: "transparent",
         toolTip: {
             shared: true 
         },
@@ -127,6 +128,7 @@ var chart2 = new CanvasJS.Chart("chartContainer2", {
         verticalAlign: "center",
         horizontalAlign: "right",
     },
+    backgroundColor: "transparent",
     toolTip: {
         shared: true // This will ensure all series data is shown in the tooltip
     },
@@ -153,11 +155,8 @@ var chart2 = new CanvasJS.Chart("chartContainer2", {
         },
     ]
 });
-
-   
     chart.render();
     chart2.render();
-
     document.getElementById("yearDropdown").onchange = function() {
         var selectedYear = this.value;
         updateChartData(selectedYear);

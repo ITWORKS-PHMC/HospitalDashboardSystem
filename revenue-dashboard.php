@@ -2,7 +2,7 @@
 require 'connection.php';
 
 // Fetch distinct years from the dashboard_census table
-$yearQuery = "SELECT DISTINCT YEAR(census_date_admitted) AS year FROM dashboard_database";
+$yearQuery = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
 $yearResult = mysqli_query($conn, $yearQuery);
 
 // Get selected month from the URL parameter
@@ -51,33 +51,43 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
                 ?>
             </select>
         </form>
+        <form id="deptForm" >
+        <select class="Filter-button" id="deptFilter" name="selected_department">
+            <option value="CT-SCAN">CT-SCAN</option>
+            <option value="DIABETES CLINIC">DIABETES CLINIC</option>
+            <option value="DIETARY">DIETARY</option>
+            <option value="DOCTORS WING">DOCTORS WING</option>
+            <option value="EMERGENCY ROOM">EMERGENCY ROOM</option>
+            <option value="EYE CENTER">EYE CENTER</option>
+            <option value="FIFTH FLOOR WING B1">FIFTH FLOOR WING B1</option>
+            <option value="FIFTH FLOOR WING B2">FIFTH FLOOR WING B2</option>
+            <option value="GHMS 2">GHMS 2</option>
+            <option value="HEARING CENTER">HEARING CENTER</option>
+        </select>
+    </form>
     </div>
 </div>
-<div class="dashboard-content">
+<div class="dashboard-content" style="margin-left:30px;">
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 20px;">
         <div class="Number-box" style="grid-column: 1 / 2;">
             <div class="boxtotalpatient">
-                <p class="boxtitle1">Total Patient</p>
+                <p class="boxtitle1">Total Revenue</p>
                 <div id="boxtotalpatient">
                     <?php include 'revenue-totalpatient.php'; ?>
                 </div>
             </div>
             <div class="boxtotalbed">
-                <p class="boxtitle">Total Beds vs Census</p>
+                <p class="boxtitle" style="left: 25px;">Total Revenue vs Target</p>
                 <div id="boxtotalIPD">
                     <?php include 'revenue-totalbed.php'; ?>
                 </div>
             </div>
         </div>
-        <div class="Meter-container" style="grid-column: 2 / 3;">
-            <div id="donutContainer">
-                <?php include 'revenue-donut.php'; ?>
-            </div>
-        </div>
-        <div class="line-graphs-container" style="grid-column: 1 / 3;">
+        <div class="Bar-graphs-container" style="grid-column: 2 / 3;">
             <div class="line-graph">
                 <?php include 'revenue-TotalPatientGraph.php'; ?>
             </div>
+        </div>
         </div>
     </div>
 </div>
@@ -96,8 +106,15 @@ function updateDonut(selectedYear, selectedMonth) {
             var opdpercentage = parseFloat(document.getElementById("opdPercentage").innerText);
             var ipdPercentage = parseFloat(document.getElementById("ipdPercentage").innerText);
             var erPercentage = parseFloat(document.getElementById("erPercentage").innerText);
+            var xrayPercentage = parseFloat(document.getElementById("xrayPercentage").innerText);
+            var mriPercentage = parseFloat(document.getElementById("mriPercentage").innerText);
+            var pulmonaryPercentage = parseFloat(document.getElementById("pulmonaryPercentage").innerText);
+            var ultrasoundPercentage = parseFloat(document.getElementById("ultrasoundPercentage").innerText);
+            var icuPercentage = parseFloat(document.getElementById("icuPercentage").innerText);
+            var laboratoryPercentage = parseFloat(document.getElementById("laboratoryPercentage").innerText);
+            var csrPercentage = parseFloat(document.getElementById("csrPercentage").innerText);
             // Call generateArrow() with updated data after content is updated
-            generateArrow(opdpercentage, ipdPercentage, erPercentage);
+            generateArrow(opdpercentage, ipdPercentage, erPercentage, xrayPercentage, mriPercentage. pulmonaryPercentage, ultrasoundPercentage, icuPercentage, laboratoryPercentage, csrPercentage);
         }
     };
     xhttp.open("GET", "revenue-donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);

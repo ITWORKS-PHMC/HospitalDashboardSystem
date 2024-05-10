@@ -6,7 +6,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 $selected_month = isset($_GET['selected_month']) ? $_GET['selected_month'] : date('m');
 
 // SQL query to count total Inpatient Department (IPD) IDs for the selected year and month
-$sql = "SELECT COUNT(total_census) as totalcensus_id 
+$sql = "SELECT SUM(total_census) as totalcensus_id 
         FROM dashboard_census 
         WHERE YEAR(transaction_date) = $selected_year 
         AND MONTH(transaction_date) = $selected_month
@@ -30,7 +30,7 @@ if ($result->num_rows > 0) {
         // Fetch the target value
         $row2 = $result2->fetch_assoc();
         $totalTarget = $row2["totaltarget"];
-        echo "<div class='result'>$totalIPD/$totalTarget</div>";
+        echo "<div class='result' style='top:70px;left: 75px;position: absolute; color:black;'>$totalIPD/$totalTarget</div>";
     } else {
         echo "No target set for the selected year and month";
     }

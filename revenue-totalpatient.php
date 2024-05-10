@@ -29,10 +29,10 @@ if ($result->num_rows > 0) {
         // Compare total patients with the target value
         if ($totalPatients >= $totalTarget) {
             // Display total patients with green arrow
-            echo "<div class='result'>$totalPatients<span class='green-arrow' style='float: right;'>&#8593;</span></div>";
+            echo "<div class='result' style='top:50px;left:100px;position: absolute; color:black;>$totalPatients<span class='green-arrow' style='float: right;'>&#8593;</span></div>";
         } else {
             // Display total patients with red arrow
-            echo "<div class='result'><span class='red-arrow' style='float: left;'>&#8595;</span>$totalPatients</div>";
+            echo "<div class='result' style='top:50px;left:100px;position: absolute; color:black;><span class='red-arrow' style='float: left;'>&#8595;</span>$totalPatients</div>";
         }
     } else {
         echo "No target set for the selected year and month";

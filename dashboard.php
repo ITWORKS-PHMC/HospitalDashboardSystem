@@ -53,7 +53,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         </form>
     </div>
 </div>
-<div class="dashboard-content">
+<div class="dashboard-content" style="margin-left:30px;">
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 20px;">
         <div class="Number-box" style="grid-column: 1 / 2;">
             <div class="boxtotalpatient">

@@ -26,7 +26,7 @@
         justify-content: space-between !important;
         align-items: center !important;
         padding: 0 20px !important;
-        background-color: #ffffff !important;
+        /* background-color: #ffffff !important; */
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     }
 

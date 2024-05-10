@@ -124,7 +124,7 @@ $getMRI = mysqli_query($conn, $sqlTvalueMRI);
 if ($getMRI) {
     $value1 = mysqli_fetch_assoc($getMRI);
     if ($value1) {
-        $TValueXRAY = $value1['target_value'];
+        $TValueMRI = $value1['target_value'];
 
     } else {
         echo "No data found for target_type = 'MRI'";
@@ -142,7 +142,7 @@ if ($getPULMONARY) {
    if ($value1) {
         $TValuePULMONARY = $value1['target_value'];
     } else {
-        echo "No data found for target_type = 'OPD'";
+        echo "No data found for target_type = 'PULMONARY'";
     }
 } else {
     echo "Error: " . mysqli_error($conn);
@@ -206,16 +206,16 @@ if ($getCSR) {
     echo "Error: " . mysqli_error($conn);
 }
 
-$OPDpercentage = round(75);
+$OPDpercentage = round($totalOPDCensus / $TValueOPD * 100);
 $IPDPercentage = round($totalIPDCensus / $TValueIPD * 100);
 $ERPercentage = round($totalERCensus / $TValueER * 100);
-$XRAYPercentage = round(25);
-$MRIPercentage = round(88);
-$PULMONARYPercentage = round(69);
-$ULTRASOUNDPercentage = round(69);
-$ICUPercentage = round(69);
-$LABORATORYPercentage = round(69);
-$CSRPercentage = round(69);
+$XRAYPercentage = round($totalXRAYCensus / $TValueXRAY * 100);
+$MRIPercentage = round($totalMRICensus / $TValueMRI * 100);
+$PULMONARYPercentage = round($totalPULMONARYCensus / $TValuePULMONARY * 100);
+$ULTRASOUNDPercentage = round($totalULTRASOUNDCensus / $TValueULTRASOUND * 100);
+$ICUPercentage = round($totalICUCensus / $TValueICU * 100);
+$LABORATORYPercentage = round($totalLABORATORYCensus / $TValueLABORATORY * 100);
+$CSRPercentage = round($totalCSRCensus / $TValueCSR * 100);
 
 mysqli_close($conn);
 ?>
@@ -424,10 +424,11 @@ mysqli_close($conn);
         }
         .chart-label{
             text-align: center;
+            font-weight: bold;
+            color:black;
         }
     .meter-graph{
       width: 500px;
-      
     }
     </style>
 	<body>
@@ -435,6 +436,13 @@ mysqli_close($conn);
         <div id="opdPercentage" style="display: none;"><?php echo $OPDpercentage; ?></div>
         <div id="ipdPercentage" style="display: none;"><?php echo $IPDPercentage; ?></div>
         <div id="erPercentage" style="display: none;"><?php echo $ERPercentage; ?></div>
+        <div id="xrayPercentage" style="display: none;"><?php echo $XRAYpercentage; ?></div>
+        <div id="mriPercentage" style="display: none;"><?php echo $MRIPercentage; ?></div>
+        <div id="pulmonaryPercentage" style="display: none;"><?php echo $PULMONARYPercentage; ?></div>
+        <div id="ultrasoundPercentage" style="display: none;"><?php echo $ULTRASOUNDPercentage; ?></div>
+        <div id="icuPercentage" style="display: none;"><?php echo $ICUpercentage; ?></div>
+        <div id="laboratoryPercentage" style="display: none;"><?php echo $LABORATORYPercentage; ?></div>
+        <div id="csrPercentage" style="display: none;"><?php echo $CSRPercentage; ?></div>
         <div class = "Row1-graph-container">
 		<div class="graph-container">
             <!-- FOR METER OPD  -->
@@ -447,7 +455,7 @@ mysqli_close($conn);
 				<div class="label right">100%</div>
 
                 <div class = "chart-label">
-				<p style="color:black">OPD TARGET CENSUS</p>
+				<p style="color:black">OPD TARGET REVENUE</p>
 				<?php 
                 echo "Total OPD Census: " . $totalOPDCensus . "<br>";?>
                 </div> <div class="multi-graph margin">
@@ -469,7 +477,7 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">IPD TARGET CENSUS</p>
+				<p class = "chart-label" style="color:black">IPD TARGET REVENUE</p>
 				<?php echo "Total IPD Census: " . $totalIPDCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
@@ -491,7 +499,7 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">ER TARGET CENSUS</p>
+				<p class = "chart-label" style="color:black">ER TARGET REVENUE</p>
 				<?php echo "Total ER Census: " . $totalERCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
@@ -512,7 +520,7 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">XRAY TARGET CENSUS</p>
+				<p class = "chart-label" style="color:black">XRAY TARGET REVENUE</p>
 				<?php echo "Total XRAY Census: " . $totalXRAYCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
@@ -522,7 +530,7 @@ mysqli_close($conn);
             <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
             <div style="top: -10px; left: calc(30% - 5px);"></div>
             <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
-					<div class="graph er" data-name="ER" style="--percentage : <?php echo $XRAYercentage; ?>;"></div>
+					<div class="graph er" data-name="XRAY" style="--percentage : <?php echo $XRAYercentage; ?>;"></div>
 				</div>
 			</div>
                     <!-- FOR METER ER  -->
@@ -533,7 +541,7 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">MRI TARGET CENSUS</p>
+				<p class = "chart-label" style="color:black">MRI TARGET REVENUE</p>
 				<?php echo "Total MRI Census: " . $totalMRICensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
@@ -543,7 +551,7 @@ mysqli_close($conn);
             <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
             <div style="top: -10px; left: calc(30% - 5px);"></div>
             <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
-					<div class="graph er" data-name="ER" style="--percentage : <?php echo $MRIPercentage; ?>;"></div>
+					<div class="graph er" data-name="MRI" style="--percentage : <?php echo $MRIPercentage; ?>;"></div>
 				</div>
 			</div>
                     <!-- FOR METER PULMONARY  -->
@@ -554,8 +562,8 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">PULMONARY TARGET CENSUS</p>
-				<?php echo "Total MRI Census: " . $totalPULMONARYCensus . "<br>";?>
+				<p class = "chart-label" style="color:black">PULMO TARGET REVENUE</p>
+				<?php echo "Total PULMO Census: " . $totalPULMONARYCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
                       <div style="top: -10px; left: calc(80% - 5px);"></div>
@@ -564,7 +572,7 @@ mysqli_close($conn);
             <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
             <div style="top: -10px; left: calc(30% - 5px);"></div>
             <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
-					<div class="graph er" data-name="ER" style="--percentage : <?php echo $PULMONARYPercentage; ?>;"></div>
+					<div class="graph er" data-name="PULMONARY" style="--percentage : <?php echo $PULMONARYPercentage; ?>;"></div>
 				</div>
 			</div>
                     <!-- FOR METER ULTRASOUND  -->
@@ -575,8 +583,8 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black; font-size:14.3px">ULTRASOUND TARGET CENSUS</p>
-				<?php echo "Total MRI Census: " . $totalICUCensus . "<br>";?>
+				<p class = "chart-label" style="color:black">ULTRA TARGET REVENUE</p>
+				<?php echo "Total ULTRA Census: " . $totalICUCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
                       <div style="top: -10px; left: calc(80% - 5px);"></div>
@@ -585,7 +593,7 @@ mysqli_close($conn);
             <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
             <div style="top: -10px; left: calc(30% - 5px);"></div>
             <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
-					<div class="graph er" data-name="ER" style="--percentage : <?php echo $ICUPercentage; ?>;"></div>
+					<div class="graph er" data-name="ULTRASOUND" style="--percentage : <?php echo $ULTRASOUNDPercentage; ?>;"></div>
 				</div>
 			</div>
                     <!-- FOR METER ICU  -->
@@ -596,8 +604,8 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">ICU TARGET CENSUS</p>
-				<?php echo "Total MRI Census: " . $totalICUCensus . "<br>";?>
+				<p class = "chart-label" style="color:black">ICU TARGET REVENUE</p>
+				<?php echo "Total ICU Census: " . $totalICUCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
                       <div style="top: -10px; left: calc(80% - 5px);"></div>
@@ -606,7 +614,7 @@ mysqli_close($conn);
             <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
             <div style="top: -10px; left: calc(30% - 5px);"></div>
             <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
-					<div class="graph er" data-name="ER" style="--percentage : <?php echo $ICUPercentage; ?>;"></div>
+					<div class="graph er" data-name="ICU" style="--percentage : <?php echo $ICUPercentage; ?>;"></div>
 				</div>
 			</div>
                     <!-- FOR METER LABORATORY  -->
@@ -617,8 +625,8 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">LABORATORY TARGET CENSUS</p>
-				<?php echo "Total MRI Census: " . $totalLABORATORYCensus . "<br>";?>
+				<p class = "chart-label" style="color:black">LAB TARGET REVENUE</p>
+				<?php echo "Total LAB Census: " . $totalLABORATORYCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
                       <div style="top: -10px; left: calc(80% - 5px);"></div>
@@ -627,7 +635,7 @@ mysqli_close($conn);
             <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
             <div style="top: -10px; left: calc(30% - 5px);"></div>
             <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
-					<div class="graph er" data-name="ER" style="--percentage : <?php echo $LABORATORYPercentage; ?>;"></div>
+					<div class="graph er" data-name="LABORATORY" style="--percentage : <?php echo $LABORATORYPercentage; ?>;"></div>
 				</div>
 			</div>
                     <!-- FOR METER CSR  -->
@@ -638,8 +646,8 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">CSR TARGET CENSUS</p>
-				<?php echo "Total MRI Census: " . $totalCSRCensus . "<br>";?>
+				<p class = "chart-label" style="color:black">CSR TARGET REVENUE</p>
+				<?php echo "Total CSR Census: " . $totalCSRCensus . "<br>";?>
                 </div>
 				<div class="multi-graph margin">
                       <div style="top: -10px; left: calc(80% - 5px);"></div>
@@ -648,7 +656,7 @@ mysqli_close($conn);
             <div class="graph" style="--percentage : 59; --fill:#FEDA3E  ;"></div>
             <div style="top: -10px; left: calc(30% - 5px);"></div>
             <div class="graph" style="--percentage : 45; --fill: #ff0000  ;"> </div>
-					<div class="graph er" data-name="ER" style="--percentage : <?php echo $CSRPercentage; ?>;"></div>
+					<div class="graph er" data-name="CSR" style="--percentage : <?php echo $CSRPercentage; ?>;"></div>
 				</div>
 			</div>
 		</div>
@@ -685,17 +693,44 @@ mysqli_close($conn);
         mriArrow.classList.add('arrow');
         document.querySelector('.meter-graph5').appendChild(mriArrow);
 
+        var pulmonaryArrowPosition = <?php echo $PULMONARYPercentage; ?>;
+        var pulmonaryArrow = document.createElement('div');
+        pulmonaryArrow.classList.add('arrow');
+        document.querySelector('.meter-graph6').appendChild(pulmonaryArrow);
+
+        var ultrasoundArrowPosition = <?php echo $ULTRASOUNDPercentage; ?>;
+        var ultrasoundArrow = document.createElement('div');
+        ultrasoundArrow.classList.add('arrow');
+        document.querySelector('.meter-graph7').appendChild(ultrasoundArrow);
+
+        var icuArrowPosition = <?php echo $ICUPercentage; ?>;
+        var icuArrow = document.createElement('div');
+        icuArrow.classList.add('arrow');
+        document.querySelector('.meter-graph8').appendChild(icuArrow);
+
+        var laboratoryArrowPosition = <?php echo $LABORATORYPercentage; ?>;
+        var laboratoryArrow = document.createElement('div');
+        laboratoryArrow.classList.add('arrow');
+        document.querySelector('.meter-graph9').appendChild(laboratoryArrow);
+
+        var csrArrowPosition = <?php echo $CSRPercentage; ?>;
+        var csrArrow = document.createElement('div');
+        csrArrow.classList.add('arrow');
+        document.querySelector('.meter-graph10').appendChild(csrArrow);
+
         // Adjust position of arrows based on percentage
         opdArrow.style.transform = `translate(-50%, 0) rotate(${opdArrowPosition * 1.8 - 90}deg)`;
         ipdArrow.style.transform = `translate(-50%, 0) rotate(${ipdArrowPosition * 1.8 - 90}deg)`;
         erArrow.style.transform = `translate(-50%, 0) rotate(${erArrowPosition * 1.8 - 90}deg)`;
         xrayArrow.style.transform = `translate(-50%, 0) rotate(${xrayArrowPosition * 1.8 - 90}deg)`;
         mriArrow.style.transform = `translate(-50%, 0) rotate(${mriArrowPosition * 1.8 - 90}deg)`;
+        pulmonaryArrow.style.transform = `translate(-50%, 0) rotate(${pulmonaryArrowPosition * 1.8 - 90}deg)`;
+        ultrasoundArrow.style.transform = `translate(-50%, 0) rotate(${ultrasoundArrowPosition * 1.8 - 90}deg)`;
+        icuArrow.style.transform = `translate(-50%, 0) rotate(${icuArrowPosition * 1.8 - 90}deg)`;
+        laboratoryArrow.style.transform = `translate(-50%, 0) rotate(${laboratoryArrowPosition * 1.8 - 90}deg)`;
+        csrArrow.style.transform = `translate(-50%, 0) rotate(${csrArrowPosition * 1.8 - 90}deg)`;
 
-          function generateArrow(OPDpercentage, IPDPercentage, ERPercentage) {
-            console.log("OPD Percentage: ", OPDpercentage);
-            console.log("IPD Percentage: ", IPDPercentage);
-            console.log("ER Percentage: ", ERPercentage);
+          function generateArrow(OPDpercentage, IPDPercentage, ERPercentage, XRAYPercentage, MRIPercentage, PULMONARYPercentage, ULTRASOUNDPercentage, ICUPercentage, LABORATORYPercentage, CSRPercentage) {
 
             // Remove existing arrows if they exist
             var existingArrows = document.querySelectorAll('.arrow');
@@ -708,7 +743,7 @@ mysqli_close($conn);
             opdArrow.classList.add('arrow');
             document.querySelector('.meter-graph1').appendChild(opdArrow);
             opdArrow.style.transform = `translate(-50%, 0) rotate(${OPDpercentage * 1.8 - 90}deg)`;
-
+            
             // Calculate arrow position for IPD
             var ipdArrow = document.createElement('div');
             ipdArrow.classList.add('arrow');
@@ -721,17 +756,44 @@ mysqli_close($conn);
             document.querySelector('.meter-graph3').appendChild(erArrow);
             erArrow.style.transform = `translate(-50%, 0) rotate(${ERPercentage * 1.8 - 90}deg)`;
 
-            // Calculate arrow position for ER
-            var erArrow = document.createElement('div');
-            erArrow.classList.add('arrow');
-            document.querySelector('.meter-graph3').appendChild(erArrow);
-            erArrow.style.transform = `translate(-50%, 0) rotate(${ERPercentage * 1.8 - 90}deg)`;
+            var xrayArrow = document.createElement('div');
+            xrayArrow.classList.add('arrow');
+            document.querySelector('.meter-graph4').appendChild(xrayArrow);
+            xrayArrow.style.transform = `translate(-50%, 0) rotate(${XRAYPercentage * 1.8 - 90}deg)`;
 
-            // Calculate arrow position for ER
-            var erArrow = document.createElement('div');
-            erArrow.classList.add('arrow');
-            document.querySelector('.meter-graph3').appendChild(erArrow);
-            erArrow.style.transform = `translate(-50%, 0) rotate(${ERPercentage * 1.8 - 90}deg)`;
+            var mriArrow = document.createElement('div');
+            mriArrow.classList.add('arrow');
+            document.querySelector('.meter-graph5').appendChild(mriArrow);
+            mriArrow.style.transform = `translate(-50%, 0) rotate(${MRIPercentage * 1.8 - 90}deg)`;
+
+            var pulmonaryArrow = document.createElement('div');
+            pulmonaryArrow.classList.add('arrow');
+            document.querySelector('.meter-graph6').appendChild(pulmonaryArrow);
+            pulmonaryArrow.style.transform = `translate(-50%, 0) rotate(${PULMONARYPercentage * 1.8 - 90}deg)`;
+
+            
+            var ultrasoundArrow = document.createElement('div');
+            ultrasoundArrow.classList.add('arrow');
+            document.querySelector('.meter-graph7').appendChild(ultrasoundArrow);
+            ultrasoundArrow.style.transform = `translate(-50%, 0) rotate(${ULTRASOUNDPercentage * 1.8 - 90}deg)`;
+
+            
+            var icuArrow = document.createElement('div');
+            icuArrow.classList.add('arrow');
+            document.querySelector('.meter-graph8').appendChild(icuArrow);
+            icuArrow.style.transform = `translate(-50%, 0) rotate(${ICUPercentage * 1.8 - 90}deg)`;
+
+            
+            var laboratoryArrow = document.createElement('div');
+            laboratoryArrow.classList.add('arrow');
+            document.querySelector('.meter-graph9').appendChild(laboratoryArrow);
+            laboratoryArrow.style.transform = `translate(-50%, 0) rotate(${LABORATORYPercentage * 1.8 - 90}deg)`;
+
+            
+            var csrArrow = document.createElement('div');
+            csrArrow.classList.add('arrow');
+            document.querySelector('.meter-graph10').appendChild(csrArrow);
+            csrArrow.style.transform = `translate(-50%, 0) rotate(${CSRPercentage * 1.8 - 90}deg)`;
         }
         
     </script>

@@ -278,9 +278,9 @@ mysqli_close($conn);
 				<div class="label right">100%</div>
 
                 <div class = "chart-label">
-				<p style="color:black">OPD TARGET CENSUS</p>
+				<p style="color:black"><strong>OPD TARGET CENSUS</strong></p>
 				<?php 
-                echo "Total OPD Census: " . $totalOPDCensus . "<br>";?>
+                echo "<span style='color: black; font-weight:bold;'>Total OPD Census: " . $totalOPDCensus . "</span><br>"; ?>
                 </div> <div class="multi-graph margin">
             <div style="top: -10px; left: calc(80% - 5px);"></div>
             <div class="graph" style="--percentage : 100; --fill: #008000 ;"> </div>
@@ -300,8 +300,8 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">IPD TARGET CENSUS</p>
-				<?php echo "Total IPD Census: " . $totalIPDCensus . "<br>";?>
+				<p class = "chart-label" style="color:black"><strong>IPD TARGET CENSUS</strong></p>
+				<?php echo "<span style='color: black; font-weight:bold;'>Total IPD Census: " . $totalIPDCensus . "</span><br>"; ?>
                 </div>
 				<div class="multi-graph margin">
             <div style="top: -10px; left: calc(80% - 5px);"></div>
@@ -322,8 +322,8 @@ mysqli_close($conn);
 				<div class="label halfright">75%</div>  
 				<div class="label right">100%</div>
                 <div class = "chart-label">
-				<p class = "chart-label" style="color:black">ER TARGET CENSUS</p>
-				<?php echo "Total ER Census: " . $totalERCensus . "<br>";?>
+				<p class = "chart-label" style="color:black"><strong>ER TARGET CENSUS</strong></p>
+				<?php echo "<span style='color: black; font-weight:bold;'>Total ER Census: " . $totalERCensus . "</span><br>"; ?>
                 </div>
 				<div class="multi-graph margin">
                       <div style="top: -10px; left: calc(80% - 5px);"></div>

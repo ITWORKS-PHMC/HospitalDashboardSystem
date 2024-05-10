@@ -30,7 +30,7 @@ if ($result->num_rows > 0) {
         // Fetch the target value
         $row2 = $result2->fetch_assoc();
         $totalTarget = $row2["totaltarget"];
-        echo "<div class='result'>$totalIPD/$totalTarget</div>";
+        echo "<div class='result' style='top:70px;left: 75px;position: absolute; color:black;'>$totalIPD/$totalTarget</div>";
     } else {
         echo "No target set for the selected year and month";
     }

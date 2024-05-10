@@ -31,38 +31,55 @@ h1 {
 }
 .boxtotalpatient {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: 25px; /* Half of the height */
   background-color: rgb(255, 255, 255);
   position: relative;
-  width: 200px;
-  padding: 70px;
+  width: 220px;
+  padding: 20px; /* Adjust padding accordingly */
   margin: 10px;
-  height: 50px;
+  height: 90px;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 56, 68, 1) 0%,
+    rgba(163, 217, 185, 1) 51.5%,
+    rgb(203, 219, 200) 88.6%
+  );
+  color: white;
 }
 
 .boxtotalbed {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: 25px; /* Half of the height */
   background-color: rgb(255, 255, 255);
   position: relative;
   display: block;
-  width: 200px;
-  padding: 70px;
+  width: 220px;
+  padding: 20px; /* Adjust padding accordingly */
   margin: 10px;
-  height: 50px;
+  height: 90px;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 56, 68, 1) 0%,
+    rgba(163, 217, 185, 1) 51.5%,
+    rgb(203, 219, 200) 88.6%
+  );
+  color: white;
 }
 
 .boxtitle1 {
   position: absolute;
-  top: 0;
-  left: 90px;
+  top: 10;
+  left: 0;
+  right: 0;
+  margin: auto;
   font-size: 20px;
   font-weight: bold;
+  text-align: center;
 }
 .boxtitle {
   position: absolute;
   top: 0;
-  left: 55px;
+  left: 40px;
   font-size: 20px;
   font-weight: bold;
 }
@@ -253,27 +270,48 @@ h1 {
   text-align: center;
 }
 .Filter-button {
-  background-color: #426b1f;
   height: 30px;
   width: 145px;
   text-align: center;
-  color: white;
+  color: rgb(255, 255, 255);
   margin: 5px;
+  background-color: rgba(0, 56, 68, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 25px;
 }
 body {
-  background-color: #48ff00;
+  /* background-color: #48ff00; */
+  background-image: radial-gradient(
+    circle 1292px at -13.6% 51.7%,
+    rgba(0, 56, 68, 1) 0%,
+    rgba(163, 217, 185, 1) 51.5%,
+    rgb(203, 219, 200) 88.6%
+  );
 }
 
 .Meter-container {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  background-color: rgb(255, 255, 255);
   position: relative;
-  width: 1320px;
+  width: 1350px;
   padding: 60px;
   margin: 10px;
   height: 270px;
+  color: white;
+}
+.bar-graphContainer {
+  box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  position: relative;
+  width: 1350px;
+  padding: 60px;
+  margin: 10px;
+  height: 270px;
+  color: white;
 }
 .Number-box {
   position: relative;
+}
+
+.Bar-graphs-container {
 }

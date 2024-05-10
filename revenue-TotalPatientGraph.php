@@ -2,10 +2,11 @@
 require 'connection.php';
 
 // Fetch data from the database
-$sql = "SELECT YEAR(census_date_admitted) AS year, MONTH(census_date_admitted) AS month, COUNT(census_transaction_id) AS total 
-        FROM dashboard_database
-        GROUP BY YEAR(census_date_admitted), MONTH(census_date_admitted)";
+$sql = "SELECT YEAR(transaction_date) AS year, MONTH(transaction_date) AS month, SUM(total_census) AS total 
+        FROM dashboard_census
+        GROUP BY YEAR(transaction_date), MONTH(transaction_date)";
 $result = mysqli_query($conn, $sql);
+
 
 $years = array();
 $dataPoints = array();
@@ -97,12 +98,14 @@ if ($result_chart2->num_rows > 0) {
 <script src="lib/graphs.js"></script>
 </head>
 <body>
-<div class="charts-container" style="display: flex;">
-<div class="chart-1" style="flex: 1; margin-right: 10px;">
-<div id="chartContainer" style="height: 370px; width: 1200px;"></div>
+<div class="charts-container" style="display: block;">
+<div class="chart-1" style="flex: 1; display:flex;">
+<div id="chartContainer" style="height: 370px; width: 1550px; box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1); border-radius: 8px;"></div>
 </div>
-<div class="chart-2" style="flex: 1; margin-left: 10px;">
-<div id="chartContainer2" style="height: 370px; width: 610px;"></div>
+
+</div>
+<div class="chart-2" style="flex: 1; margin-top: 40px; display:flex;">
+<div id="chartContainer2" style="height: 370px; width: 1550px; box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1); border-radius: 8px;"></div>
 </div>
 </div>
 
@@ -130,12 +133,13 @@ window.onload = function () {
     var chart = new CanvasJS.Chart("chartContainer", {
         animationEnabled: true,
         title: {
-            text: "Total Patient for Year <?php echo $currentYear; ?>"
+            text: "Total Revenue for Year <?php echo $currentYear; ?>"
         },
         axisY: {
-            title: "Number of Total Patient",
+            title: "Revenue",
             includeZero: false,
         },
+        backgroundColor: "transparent",
         toolTip: {
             shared: true 
         },
@@ -164,127 +168,85 @@ window.onload = function () {
 var chart2 = new CanvasJS.Chart("chartContainer2", {
     animationEnabled: true,
     title: {
-        text: "Yearly OPD, IPD, and ER Data"
+        text: "Total Revenue per Department"
     },
     axisY: {
-        title: "Number of Patients"
+        title: "Revenue"
     },
     legend: {
         verticalAlign: "center",
         horizontalAlign: "right",
     },
+    backgroundColor: "transparent",
     toolTip: {
         shared: true // This will ensure all series data is shown in the tooltip
     },
     data: [{
-            type: "line",
-            name: "OPD",
+            type: "bar",
+            name: "X-RAY",
             showInLegend: true,
             color: "red",
             dataPoints: dataPoints_opd
         },
         {
-            type: "line",
-            name: "IPD",
+            type: "bar",
+            name: "PULMONARY",
             showInLegend: true,
             color: "orange",
             dataPoints: dataPoints_ipd
         },
         {
-            type: "line",
-            name: "ER",
+            type: "bar",
+            name: "CT-SCAN",
             showInLegend: true,
             color: "green",
-            dataPoints: dataPoints_er
+            dataPoints: dataPoints_opd
         },
         {
-            type: "line",
-            name: "X-RAY",
+            type: "bar",
+            name: "DIABETES CLINIC",
             showInLegend: true,
-            color: "#000080",
-            dataPoints: dataPoints_xray
+            color: "black",
+            dataPoints: dataPoints_ipd
         },
         {
-            type: "line",
-            name: "CSR DISPENSING",
+            type: "bar",
+            name: "DIETARY",
             showInLegend: true,
             color: "teal",
-            dataPoints: dataPoints_csr_dispensing
+            dataPoints: dataPoints_opd
         },
         {
-            type: "line",
-            name: "PULMONARY",
-            showInLegend: true,
-            color: "yellow",
-            dataPoints: dataPoints_pulmonary
-        },
-        {
-            type: "line",
-            name: "EMERGENCY ROOM",
-            showInLegend: true,
-            color: "green",
-            dataPoints: dataPoints_emergency_room
-        },
-        {
-            type: "line",
-            name: "MEDICAL RECORDS",
-            showInLegend: true,
-            color: "blue",
-            dataPoints: dataPoints_medical_records
-        },
-        {
-            type: "line",
-            name: "PHARMANCY DISPENSING",
-            showInLegend: true,
-            color: "purple",
-            dataPoints: dataPoints_pharmacy_dispensing
-        },
-        {
-            type: "line",
-            name: "ICU",
-            showInLegend: true,
-            color: "brown",
-            dataPoints: dataPoints_icu
-        },
-        {
-            type: "line",
-            name: "MRI",
-            showInLegend: true,
-            color: "pink",
-            dataPoints: dataPoints_mri
-        },
-        {
-            type: "line",
-            name: "ULTRASOUND",
-            showInLegend: true,
-            color: "cyan",
-            dataPoints: dataPoints_ultrasound
-        },
-        {
-            type: "line",
-            name: "LABORATORY",
-            showInLegend: true,
-            color: "magenta",
-            dataPoints: dataPoints_laboratory
-        },
-        {
-            type: "line",
-            name: "RAD. ONCO LINAC",
-            showInLegend: true,
-            color: "lime",
-            dataPoints: dataPoints_rad_onco_linac
-        },
-        {
-            type: "line",
-            name: "HEMODIALYSIS",
+            type: "bar",
+            name: "DOCTORS WING",
             showInLegend: true,
             color: "aqua",
-            dataPoints: dataPoints_rad_onco_linac
+            dataPoints: dataPoints_ipd
+        },
+        {
+            type: "bar",
+            name: "EYE CENTER",
+            showInLegend: true,
+            color: "blue",
+            dataPoints: dataPoints_opd
+        },
+        {
+            type: "bar",
+            name: "EMERGENCY ROOM",
+            showInLegend: true,
+            color: "purple",
+            dataPoints: dataPoints_ipd
+        },
+        {
+            type: "bar",
+            name: "HEARING CENTER",
+            showInLegend: true,
+            color: "yellow",
+            dataPoints: dataPoints_opd
         },
     ]
 });
 
-   
     chart.render();
     chart2.render();
 
@@ -306,75 +268,11 @@ function updateChartData(year) {
     ?>
     chart.options.data[0].dataPoints = newDataPointsCurrentYear;
     chart.options.data[1].dataPoints = newDataPointsPreviousYear;
-    chart.options.title.text = "Total Patient for Year " + year +" & "+ (year - 1).toString();
+    chart.options.title.text = "Total Revenue for Year " + year +" & "+ (year - 1).toString();
     chart.options.data[0].name = year.toString();
     chart.options.data[1].name = (year - 1).toString();
     chart.render();
 
-    // Filter data for OPD, IPD, and ER separately based on the selected year and the previous two years
-    var selectedYear = parseInt(year);
-    var dataPoints_opd_filtered = <?php echo json_encode($dataPoints_opd, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_ipd_filtered = <?php echo json_encode($dataPoints_ipd, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_er_filtered = <?php echo json_encode($dataPoints_er, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_xray_filtered = <?php echo json_encode($dataPoints_xray, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_csr_dispensing_filtered = <?php echo json_encode($dataPoints_csr_dispensing, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_pulmonary_filtered = <?php echo json_encode($dataPoints_pulmonary, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_emergency_room_filtered = <?php echo json_encode($dataPoints_emergency_room, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_medical_records_filtered = <?php echo json_encode($dataPoints_medical_records, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_pharmacy_dispensing_filtered = <?php echo json_encode($dataPoints_pharmacy_dispensing, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_icu_filtered = <?php echo json_encode($dataPoints_icu, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_mri_filtered = <?php echo json_encode($dataPoints_mri, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_ultrasound_filtered = <?php echo json_encode($dataPoints_ultrasound, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_laboratory_filtered = <?php echo json_encode($dataPoints_laboratory, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_rad_onco_linac_filtered = <?php echo json_encode($dataPoints_xray, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    var dataPoints_hemodialysis_filtered = <?php echo json_encode($dataPoints_hemodialysis, JSON_NUMERIC_CHECK); ?>.filter(function(dataPoint) {
-        return dataPoint.label == selectedYear || dataPoint.label == (selectedYear - 1) || dataPoint.label == (selectedYear - 2);
-    });
-    chart2.options.title.text = "Yearly OPD, IPD, and ER Data for " + year + ", " + (year - 1) + ", and " + (year - 2);
-    chart2.options.data[0].dataPoints = dataPoints_opd_filtered;
-    chart2.options.data[1].dataPoints = dataPoints_ipd_filtered;
-    chart2.options.data[2].dataPoints = dataPoints_er_filtered;
-    chart2.options.data[2].dataPoints = dataPoints_xray_filtered;
-    chart2.options.data[4].dataPoints = dataPoints_csr_dispensing_filtered;
-    chart2.options.data[5].dataPoints = dataPoints_pulmonary_filtered;
-    chart2.options.data[6].dataPoints = dataPoints_emergency_room_filtered;
-    chart2.options.data[7].dataPoints = dataPoints_medical_records_filtered;
-    chart2.options.data[8].dataPoints = dataPoints_pharmacy_dispensing_filtered;
-    chart2.options.data[9].dataPoints = dataPoints_icu_filtered;
-    chart2.options.data[10].dataPoints = dataPoints_mri_filtered;
-    chart2.options.data[11].dataPoints = dataPoints_ultrasound_filtered;
-    chart2.options.data[12].dataPoints = dataPoints_laboratory_filtered;
-    chart2.options.data[13].dataPoints = dataPoints_rad_onco_linac_filtered;
-    chart2.options.data[14].dataPoints = dataPoints_hemodialysis_filtered;
-    chart2.render();
 }
 }
 </script>
