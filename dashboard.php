@@ -82,8 +82,6 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     </div>
 </div>
 
-
-
 <!-- JavaScript for AJAX -->
 <script>
 function updateDonut(selectedYear, selectedMonth) {
