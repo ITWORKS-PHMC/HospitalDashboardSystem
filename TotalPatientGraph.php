@@ -28,6 +28,28 @@ while ($row = mysqli_fetch_assoc($result)) {
     $years[$year][$month] = $total;
 }
 
+// Fetch data from the database for the current year
+$sql_currentYear = "SELECT MONTH(transaction_date) AS month, SUM(total_census) AS total 
+                    FROM dashboard_census
+                    WHERE YEAR(transaction_date) = $currentYear
+                    GROUP BY MONTH(transaction_date)";
+$result_currentYear = mysqli_query($conn, $sql_currentYear);
+
+$dataPoints_currentYear = array_fill(0, 12, array("y" => 0, "label" => ""));
+
+// Initialize labels for all months
+for ($i = 0; $i < 12; $i++) {
+    $label = date("F", mktime(0, 0, 0, $i + 1, 1));
+    $dataPoints_currentYear[$i]["label"] = $label;
+}
+
+// Process fetched data into format suitable for CanvasJS
+while ($row = mysqli_fetch_assoc($result_currentYear)) {
+    $month = $row['month'] - 1; // Adjust month to zero-based index for arrays
+    $total = $row['total'];
+    $dataPoints_currentYear[$month]["y"] = $total;
+}
+
 // Query to fetch data for chart 2 (yearly data for OPD, IPD, and ER)
 $sql_chart2 = "SELECT YEAR(transaction_date) AS year,
                       SUM(CASE WHEN patient_transaction_type = 'O' THEN total_census ELSE 0 END) AS total_opd,
@@ -81,40 +103,43 @@ window.onload = function () {
     var dataPoints_ipd = <?php echo json_encode($dataPoints_ipd, JSON_NUMERIC_CHECK); ?>;
     var dataPoints_er = <?php echo json_encode($dataPoints_er, JSON_NUMERIC_CHECK); ?>;
     
-    var chart = new CanvasJS.Chart("chartContainer", {
-        animationEnabled: true,
-        title: {
-            text: "Total Patient for Year <?php echo $currentYear; ?>"
-        },
-        axisY: {
-            title: "Number of Total Patient",
-            includeZero: false,
-        },
-        backgroundColor: "transparent",
-        toolTip: {
-            shared: true 
-        },
-        legend: {
-            verticalAlign: "center",
-            horizontalAlign: "right",
-            
-        },
-        data: [{
-            type: "line",
-            showInLegend: true,
-            name: "<?php echo $currentYear; ?>",
-            color: "green",
-            dataPoints: dataPoints
-        },
-        {
-            type: "line",
-            showInLegend: true,
-            name: "<?php echo $previousYear; ?>",
-            color: "red",
-            dataPoints: dataPoints_previousYear
-        }],
-        toolTipContent: "{name}: {y} - {x}",
-    });
+// Render chart1 with default data for the current year
+var chart = new CanvasJS.Chart("chartContainer", {
+    animationEnabled: true,
+    title: {
+        text: "Total Revenue for Year <?php echo $currentYear; ?>"
+    },
+    axisY: {
+        title: "Revenue",
+        includeZero: false,
+    },
+    backgroundColor: "transparent",
+    toolTip: {
+        shared: true 
+    },
+    legend: {
+        verticalAlign: "center",
+        horizontalAlign: "right",
+        
+    },
+    data: [{
+        type: "line",
+        showInLegend: true,
+        name: "<?php echo $currentYear; ?>",
+        color: "green",
+        dataPoints: <?php echo json_encode($dataPoints_currentYear, JSON_NUMERIC_CHECK); ?>
+    },
+    {
+        type: "line",
+        showInLegend: true,
+        name: "<?php echo $previousYear; ?>",
+        color: "red",
+        dataPoints: dataPoints_previousYear
+    }],
+    toolTipContent: "{name}: {y} - {x}",
+});
+
+chart.render();
     
 var chart2 = new CanvasJS.Chart("chartContainer2", {
     animationEnabled: true,
