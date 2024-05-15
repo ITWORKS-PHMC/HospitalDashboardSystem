@@ -278,6 +278,7 @@ h1 {
   background-color: rgba(0, 56, 68, 1);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 25px;
+  cursor: pointer;
 }
 body {
   /* background-color: #48ff00; */
@@ -311,7 +312,4 @@ body {
 }
 .Number-box {
   position: relative;
-}
-
-.Bar-graphs-container {
 }
