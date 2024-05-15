@@ -5,9 +5,10 @@ require 'connection.php';
 $yearQuery = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
 $yearResult = mysqli_query($conn, $yearQuery);
 
+$deptQuery = "SELECT revenue_department FROM dashboard_revenue";
+$deptResult = mysqli_query($conn, $deptQuery);
 // Get selected month from the URL parameter
 $selected_month = isset($_GET['selected_month']) ? $_GET['selected_month'] : date('m');
-
 // Get selected year from the URL parameter
 $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('Y');
 ?>
@@ -36,7 +37,6 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
             </select>
             <input type="hidden" name="selected_month" value="<?php echo $selected_month; ?>">
         </form>
-
         <form id="monthForm">
             <select class = "Filter-button" id="monthFilter" name="selected_month">
                 <?php
@@ -51,25 +51,11 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
                 ?>
             </select>
         </form>
-        <form id="deptForm" >
-        <select class="Filter-button" id="deptFilter" name="selected_department">
-            <option value="CT-SCAN">CT-SCAN</option>
-            <option value="DIABETES CLINIC">DIABETES CLINIC</option>
-            <option value="DIETARY">DIETARY</option>
-            <option value="DOCTORS WING">DOCTORS WING</option>
-            <option value="EMERGENCY ROOM">EMERGENCY ROOM</option>
-            <option value="EYE CENTER">EYE CENTER</option>
-            <option value="FIFTH FLOOR WING B1">FIFTH FLOOR WING B1</option>
-            <option value="FIFTH FLOOR WING B2">FIFTH FLOOR WING B2</option>
-            <option value="GHMS 2">GHMS 2</option>
-            <option value="HEARING CENTER">HEARING CENTER</option>
-        </select>
-    </form>
     </div>
 </div>
 <div class="dashboard-content" style="margin-left:30px;">
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 20px;">
-        <div class="Number-box" style="grid-column: 1 / 2;">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 20px; grid-row-gap: 20px;">
+        <div class="Number-box" style="grid-column: 1 / 2; grid-row: 1/2;">
             <div class="boxtotalpatient">
                 <p class="boxtitle1">Total Revenue</p>
                 <div id="boxtotalpatient">
@@ -82,6 +68,20 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
                     <?php include 'revenue-totalbed.php'; ?>
                 </div>
             </div>
+        <div class="dept-rev-box" style="grid-row: 2/3;">
+        <form id="deptForm" >
+        <select class="Filter-button" id="deptFilter" name="selected_department">
+            <?php
+                if ($deptResult) {
+                    while ($deptRow = mysqli_fetch_assoc($deptResult)) {
+                     echo '<option value="' . $deptRow['revenue_department'] . '">' . $deptRow['revenue_department'] . '</option>';}
+                        } else {
+                            echo "Error: " . $deptQuery . "<br>" . mysqli_error($conn);
+                        }    
+            ?>
+        </select>
+    </form>
+        </div>
         </div>
         <div class="Bar-graphs-container" style="grid-column: 2 / 3;">
             <div class="line-graph">
@@ -96,35 +96,35 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 
 <!-- JavaScript for AJAX -->
 <script>
-function updateDonut(selectedYear, selectedMonth) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            // Update donutContainer with the new content
-            document.getElementById("donutContainer").innerHTML = this.responseText;
-            // Extract updated percentages from the response content
-            var opdpercentage = parseFloat(document.getElementById("opdPercentage").innerText);
-            var ipdPercentage = parseFloat(document.getElementById("ipdPercentage").innerText);
-            var erPercentage = parseFloat(document.getElementById("erPercentage").innerText);
-            var xrayPercentage = parseFloat(document.getElementById("xrayPercentage").innerText);
-            var mriPercentage = parseFloat(document.getElementById("mriPercentage").innerText);
-            var pulmonaryPercentage = parseFloat(document.getElementById("pulmonaryPercentage").innerText);
-            var ultrasoundPercentage = parseFloat(document.getElementById("ultrasoundPercentage").innerText);
-            var icuPercentage = parseFloat(document.getElementById("icuPercentage").innerText);
-            var laboratoryPercentage = parseFloat(document.getElementById("laboratoryPercentage").innerText);
-            var csrPercentage = parseFloat(document.getElementById("csrPercentage").innerText);
-            // Call generateArrow() with updated data after content is updated
-            generateArrow(opdpercentage, ipdPercentage, erPercentage, xrayPercentage, mriPercentage. pulmonaryPercentage, ultrasoundPercentage, icuPercentage, laboratoryPercentage, csrPercentage);
-        }
-    };
-    xhttp.open("GET", "revenue-donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
-    xhttp.send(); 
-}
+// function updateDonut(selectedYear, selectedMonth) {
+//     var xhttp = new XMLHttpRequest();
+//     xhttp.onreadystatechange = function() {
+//         if (this.readyState == 4 && this.status == 200) {
+//             // Update donutContainer with the new content
+//             document.getElementById("donutContainer").innerHTML = this.responseText;
+//             // Extract updated percentages from the response content
+//             var opdpercentage = parseFloat(document.getElementById("opdPercentage").innerText);
+//             var ipdPercentage = parseFloat(document.getElementById("ipdPercentage").innerText);
+//             var erPercentage = parseFloat(document.getElementById("erPercentage").innerText);
+//             var xrayPercentage = parseFloat(document.getElementById("xrayPercentage").innerText);
+//             var mriPercentage = parseFloat(document.getElementById("mriPercentage").innerText);
+//             var pulmonaryPercentage = parseFloat(document.getElementById("pulmonaryPercentage").innerText);
+//             var ultrasoundPercentage = parseFloat(document.getElementById("ultrasoundPercentage").innerText);
+//             var icuPercentage = parseFloat(document.getElementById("icuPercentage").innerText);
+//             var laboratoryPercentage = parseFloat(document.getElementById("laboratoryPercentage").innerText);
+//             var csrPercentage = parseFloat(document.getElementById("csrPercentage").innerText);
+//             // Call generateArrow() with updated data after content is updated
+//             generateArrow(opdpercentage, ipdPercentage, erPercentage, xrayPercentage, mriPercentage. pulmonaryPercentage, ultrasoundPercentage, icuPercentage, laboratoryPercentage, csrPercentage);
+//         }
+//     };
+//     xhttp.open("GET", "revenue-donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
+//     xhttp.send(); 
+// }
     // Function to handle year selection change without refreshing the page
     document.getElementById("yearDropdown").addEventListener("change", function() {
         var selectedYear = this.value;
         var selectedMonth = document.getElementById("monthFilter").value;
-        updateDonut(selectedYear, selectedMonth);
+        // updateDonut(selectedYear, selectedMonth);
         updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
         updateTotalIPD(selectedYear, selectedMonth); // Call to update IPD
     });
@@ -132,7 +132,7 @@ function updateDonut(selectedYear, selectedMonth) {
     document.getElementById("monthFilter").addEventListener("change", function() {
         var selectedYear = document.getElementById("yearDropdown").value;
         var selectedMonth = this.value;
-        updateDonut(selectedYear, selectedMonth);
+        // updateDonut(selectedYear, selectedMonth);
         updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
         updateTotalIPD(selectedYear, selectedMonth); // Call to update IPD
     });
