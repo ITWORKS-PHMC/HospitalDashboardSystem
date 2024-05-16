@@ -50,64 +50,48 @@ while ($row = mysqli_fetch_assoc($result_currentYear)) {
 }
 
 // Query to fetch data for chart 2 (monthly data for various departments)
-$sql_chart2 = "SELECT YEAR(revenue_date) AS year, MONTH(revenue_date) AS month,".
-              "SUM(CASE WHEN revenue_department = 'CT-SCAN' THEN revenue_totalAmount ELSE 0 END) AS total_ctscan,".
-              "SUM(CASE WHEN revenue_department = 'DIABETES CL' THEN revenue_totalAmount ELSE 0 END) AS total_diabetes_cl,".
-              "SUM(CASE WHEN revenue_department = 'DIETARY' THEN revenue_totalAmount ELSE 0 END) AS total_dietary,".
-              "SUM(CASE WHEN revenue_department = 'DOCTORS WIN' THEN revenue_totalAmount ELSE 0 END) AS total_doctors_win,".
-              "SUM(CASE WHEN revenue_department = 'EMERGENCY R' THEN revenue_totalAmount ELSE 0 END) AS total_emergency_r,".
-              "SUM(CASE WHEN revenue_department = 'EYE CENTER' THEN revenue_totalAmount ELSE 0 END) AS total_eye_center,".
-              "SUM(CASE WHEN revenue_department = 'FIFTH FLOOR' THEN revenue_totalAmount ELSE 0 END) AS total_fifth_floor,".
-              "SUM(CASE WHEN revenue_department = 'FIFTh FL' THEN revenue_totalAmount ELSE 0 END) AS total_fifth_fl,".
-              "SUM(CASE WHEN revenue_department = 'GHMS 2' THEN revenue_totalAmount ELSE 0 END) AS total_ghms,".
-              "SUM(CASE WHEN revenue_department = 'HEARING CEN' THEN revenue_totalAmount ELSE 0 END) AS total_hearing_cen,".
-              "SUM(revenue_totalAmount) AS total_revenue ".
-              " FROM dashboard_revenue".
-              " GROUP BY YEAR(revenue_date), MONTH(revenue_date)";
+$sql_chart2 = "SELECT MONTH(revenue_date) AS month,
+              SUM(CASE WHEN revenue_department = 'CT-SCAN' THEN revenue_totalAmount ELSE 0 END) AS total_ctscan,
+              SUM(CASE WHEN revenue_department = 'DIABETES CL' THEN revenue_totalAmount ELSE 0 END) AS total_diabetes_cl,
+              SUM(CASE WHEN revenue_department = 'DIETARY' THEN revenue_totalAmount ELSE 0 END) AS total_dietary,
+              SUM(CASE WHEN revenue_department = 'DOCTORS WIN' THEN revenue_totalAmount ELSE 0 END) AS total_doctors_win,
+              SUM(CASE WHEN revenue_department = 'EMERGENCY R' THEN revenue_totalAmount ELSE 0 END) AS total_emergency_r,
+              SUM(CASE WHEN revenue_department = 'EYE CENTER' THEN revenue_totalAmount ELSE 0 END) AS total_eye_center,
+              SUM(CASE WHEN revenue_department = 'FIFTH FLOOR' THEN revenue_totalAmount ELSE 0 END) AS total_fifth_floor,
+              SUM(CASE WHEN revenue_department = 'FIFTh FL' THEN revenue_totalAmount ELSE 0 END) AS total_fifth_fl,
+              SUM(CASE WHEN revenue_department = 'GHMS 2' THEN revenue_totalAmount ELSE 0 END) AS total_ghms,
+              SUM(CASE WHEN revenue_department = 'HEARING CEN' THEN revenue_totalAmount ELSE 0 END) AS total_hearing_cen,
+              SUM(revenue_totalAmount) AS total_revenue 
+              FROM dashboard_revenue
+              GROUP BY MONTH(revenue_date)";
 
 $result_chart2 = $conn->query($sql_chart2);
-$dataPoints_ctscan = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_diabetes_cl = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_dietary = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_doctors_win = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_emergency_r = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_eye_center = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_fifth_floor = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_fifth_fl = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_ghms = array_fill(0, 12, array("y" => 0, "label" => ""));
-$dataPoints_hearing_cen = array_fill(0, 12, array("y" => 0, "label" => ""));
-
-// Initialize labels for all months
-for ($i = 0; $i < 12; $i++) {
-    $label = date("F", mktime(0, 0, 0, $i + 1, 1));
-    $dataPoints_ctscan[$i]["label"] = $label;
-    $dataPoints_diabetes_cl[$i]["label"] = $label;
-    $dataPoints_dietary[$i]["label"] = $label;
-    $dataPoints_doctors_win[$i]["label"] = $label;
-    $dataPoints_emergency_r[$i]["label"] = $label;
-    $dataPoints_eye_center[$i]["label"] = $label;
-    $dataPoints_fifth_floor[$i]["label"] = $label;
-    $dataPoints_fifth_fl[$i]["label"] = $label;
-    $dataPoints_ghms[$i]["label"] = $label;
-    $dataPoints_hearing_cen[$i]["label"] = $label;
-}
-
+$dataPoints_ctscan = array();
+$dataPoints_diabetes_cl = array();
+$dataPoints_dietary = array();
+$dataPoints_doctors_win = array();
+$dataPoints_emergency_r = array();
+$dataPoints_eye_center = array();
+$dataPoints_fifth_floor = array();
+$dataPoints_fifth_fl = array();
+$dataPoints_ghms = array();
+$dataPoints_hearing_cen = array();
 // Check if any rows were returned for chart 2
 if ($result_chart2->num_rows > 0) {
     // Loop through each row of data for chart 2
     while($row = $result_chart2->fetch_assoc()) {
-        $year = $row["year"];
-        $month = $row["month"] - 1; // Adjust month to zero-based index for arrays
-        $dataPoints_ctscan[$month]["y"] += $row["total_ctscan"];
-        $dataPoints_diabetes_cl[$month]["y"] += $row["total_diabetes_cl"];
-        $dataPoints_dietary[$month]["y"] += $row["total_dietary"];
-        $dataPoints_doctors_win[$month]["y"] += $row["total_doctors_win"];
-        $dataPoints_emergency_r[$month]["y"] += $row["total_emergency_r"];
-        $dataPoints_eye_center[$month]["y"] += $row["total_eye_center"];
-        $dataPoints_fifth_floor[$month]["y"] += $row["total_fifth_floor"];
-        $dataPoints_fifth_fl[$month]["y"] += $row["total_fifth_fl"];
-        $dataPoints_ghms[$month]["y"] += $row["total_ghms"];
-        $dataPoints_hearing_cen[$month]["y"] += $row["total_hearing_cen"];
+        // Populate dataPoints arrays with fetched data for each department
+        $month = date("F", mktime(0, 0, 0, $row["month"], 1)); // Get the name of the month
+        $dataPoints_ctscan[] = array("y" => $row["total_ctscan"], "label" => $month);
+        $dataPoints_diabetes_cl[] = array("y" => $row["total_diabetes_cl"], "label" => $month);
+        $dataPoints_dietary[] = array("y" => $row["total_dietary"], "label" => $month);
+        $dataPoints_doctors_win[] = array("y" => $row["total_doctors_win"], "label" => $month);
+        $dataPoints_emergency_r[] = array("y" => $row["total_emergency_r"], "label" => $month);
+        $dataPoints_eye_center[] = array("y" => $row["total_eye_center"], "label" => $month);
+        $dataPoints_fifth_floor[] = array("y" => $row["total_fifth_floor"], "label" => $month);
+        $dataPoints_fifth_fl[] = array("y" => $row["total_fifth_fl"], "label" => $month);
+        $dataPoints_ghms[] = array("y" => $row["total_ghms"], "label" => $month);
+        $dataPoints_hearing_cen[] = array("y" => $row["total_hearing_cen"], "label" => $month);
     }
 } else {
     echo "0 results";
@@ -281,9 +265,9 @@ var chart2 = new CanvasJS.Chart("chartContainer2", {
         updateChartData(selectedYear);
     };
 
-    document.getElementById("monthDropdown").onchange = function() {
+    document.getElementById("monthFilter").onchange = function() {
         var selectedMonth = this.value;
-        updateChart2Data(selectedMonth);
+        updateChartData2(selectedMonth);
     };
     
 function updateChartData(year) {
@@ -303,25 +287,59 @@ function updateChartData(year) {
     chart.options.data[0].name = year.toString();
     chart.options.data[1].name = (year - 1).toString();
     chart.render();
-
 }
-function updateChart2Data(month) {
-    // Update dataPoints for chart2 based on the selected month
-    var newDataPoints = [];
-    newDataPoints.push(dataPoints_ctscan[month - 1]);
-    newDataPoints.push(dataPoints_diabetes_cl[month - 1]);
-    newDataPoints.push(dataPoints_dietary[month - 1]);
-    newDataPoints.push(dataPoints_doctors_win[month - 1]);
-    newDataPoints.push(dataPoints_emergency_r[month - 1]);
-    newDataPoints.push(dataPoints_eye_center[month - 1]);
-    newDataPoints.push(dataPoints_fifth_floor[month - 1]);
-    newDataPoints.push(dataPoints_fifth_fl[month - 1]);
-    newDataPoints.push(dataPoints_ghms[month - 1]);
-    newDataPoints.push(dataPoints_hearing_cen[month - 1]);
-    
-    chart2.options.data = newDataPoints;
+
+function updateChartData2(month) {
+    var monthLabel = "<?php echo date('F', mktime(0, 0, 0, $month, 1)); ?>"; // Convert month number to month name
+
+    // Filter data for each department based on the selected month
+    var filterData = function(dataPoints) {
+        return dataPoints.filter(function(dataPoint) {
+            return dataPoint.label === monthLabel;
+        });
+    };
+
+    var dataPoints_ctscan_filtered = filterData(<?php echo json_encode($dataPoints_ctscan, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_diabetes_cl_filtered = filterData(<?php echo json_encode($dataPoints_diabetes_cl, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_dietary_filtered = filterData(<?php echo json_encode($dataPoints_dietary, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_doctors_win_filtered = filterData(<?php echo json_encode($dataPoints_doctors_win, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_emergency_r_filtered = filterData(<?php echo json_encode($dataPoints_emergency_r, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_eye_center_filtered = filterData(<?php echo json_encode($dataPoints_eye_center, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_fifth_floor_filtered = filterData(<?php echo json_encode($dataPoints_fifth_floor, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_fifth_fl_filtered = filterData(<?php echo json_encode($dataPoints_fifth_fl, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_ghms_filtered = filterData(<?php echo json_encode($dataPoints_ghms, JSON_NUMERIC_CHECK); ?>);
+    var dataPoints_hearing_cen_filtered = filterData(<?php echo json_encode($dataPoints_hearing_cen, JSON_NUMERIC_CHECK); ?>);
+
+    // Check if any department has data for the selected month
+    var hasData = dataPoints_ctscan_filtered.length > 0 || dataPoints_diabetes_cl_filtered.length > 0 ||
+                  dataPoints_dietary_filtered.length > 0 || dataPoints_doctors_win_filtered.length > 0 ||
+                  dataPoints_emergency_r_filtered.length > 0 || dataPoints_eye_center_filtered.length > 0 ||
+                  dataPoints_fifth_floor_filtered.length > 0 || dataPoints_fifth_fl_filtered.length > 0 ||
+                  dataPoints_ghms_filtered.length > 0 || dataPoints_hearing_cen_filtered.length > 0;
+
+    // If no department has data for the selected month, display a message
+    if (!hasData) {
+        alert("No data available for " + monthLabel);
+        return;
+    }
+
+    // Update chart options with the filtered data
+    chart2.options.title.text = "Monthly Revenue per Department for " + monthLabel;
+    chart2.options.data[0].dataPoints = dataPoints_ctscan_filtered;
+    chart2.options.data[1].dataPoints = dataPoints_diabetes_cl_filtered;
+    chart2.options.data[2].dataPoints = dataPoints_dietary_filtered;
+    chart2.options.data[3].dataPoints = dataPoints_doctors_win_filtered;
+    chart2.options.data[4].dataPoints = dataPoints_emergency_r_filtered;
+    chart2.options.data[5].dataPoints = dataPoints_eye_center_filtered;
+    chart2.options.data[6].dataPoints = dataPoints_fifth_floor_filtered;
+    chart2.options.data[7].dataPoints = dataPoints_fifth_fl_filtered;
+    chart2.options.data[8].dataPoints = dataPoints_ghms_filtered;
+    chart2.options.data[9].dataPoints = dataPoints_hearing_cen_filtered;
+
+    // Render the updated chart
     chart2.render();
 }
+
 
 }  
 </script>
