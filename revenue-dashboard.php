@@ -70,17 +70,30 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
             </div>
         <div class="dept-rev-box" style="grid-row: 2/3;">
         <form id="deptForm" >
-        <select class="Filter-button" id="deptFilter" name="selected_department">
-            <?php
-                if ($deptResult) {
-                    while ($deptRow = mysqli_fetch_assoc($deptResult)) {
-                     echo '<option value="' . $deptRow['revenue_department'] . '">' . $deptRow['revenue_department'] . '</option>';}
-                        } else {
-                            echo "Error: " . $deptQuery . "<br>" . mysqli_error($conn);
-                        }    
-            ?>
+            <p style="text-align:center; font-weight:bold;">SELECT  DEPARTMENT :</p>
+        <select class="Filter-button" id="deptFilter" name="selected_department" style="width:270px;">
+        <?php
+        if ($deptResult) {
+        $seenDepartments = array();  // Array to keep track of seen departments
+            while ($deptRow = mysqli_fetch_assoc($deptResult)) {
+                if (!in_array($deptRow['revenue_department'], $seenDepartments)) {
+                // Add the department name to the array if it has not been seen before
+                $seenDepartments[] = $deptRow['revenue_department'];
+                echo '<option value="' . $deptRow['revenue_department'] . '">' . $deptRow['revenue_department'] . '</option>';
+            }
+        }
+            } else {
+                echo "Error: " . $deptQuery . "<br>" . mysqli_error($conn);
+            }
+        ?>
+
         </select>
     </form>
+        <div class="perDept">
+            <div id = "revDept">
+            <?php include 'revenue-department.php';?>
+            </div>
+        </div>
         </div>
         </div>
         <div class="Bar-graphs-container" style="grid-column: 2 / 3;">
@@ -96,48 +109,26 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 
 <!-- JavaScript for AJAX -->
 <script>
-// function updateDonut(selectedYear, selectedMonth) {
-//     var xhttp = new XMLHttpRequest();
-//     xhttp.onreadystatechange = function() {
-//         if (this.readyState == 4 && this.status == 200) {
-//             // Update donutContainer with the new content
-//             document.getElementById("donutContainer").innerHTML = this.responseText;
-//             // Extract updated percentages from the response content
-//             var opdpercentage = parseFloat(document.getElementById("opdPercentage").innerText);
-//             var ipdPercentage = parseFloat(document.getElementById("ipdPercentage").innerText);
-//             var erPercentage = parseFloat(document.getElementById("erPercentage").innerText);
-//             var xrayPercentage = parseFloat(document.getElementById("xrayPercentage").innerText);
-//             var mriPercentage = parseFloat(document.getElementById("mriPercentage").innerText);
-//             var pulmonaryPercentage = parseFloat(document.getElementById("pulmonaryPercentage").innerText);
-//             var ultrasoundPercentage = parseFloat(document.getElementById("ultrasoundPercentage").innerText);
-//             var icuPercentage = parseFloat(document.getElementById("icuPercentage").innerText);
-//             var laboratoryPercentage = parseFloat(document.getElementById("laboratoryPercentage").innerText);
-//             var csrPercentage = parseFloat(document.getElementById("csrPercentage").innerText);
-//             // Call generateArrow() with updated data after content is updated
-//             generateArrow(opdpercentage, ipdPercentage, erPercentage, xrayPercentage, mriPercentage. pulmonaryPercentage, ultrasoundPercentage, icuPercentage, laboratoryPercentage, csrPercentage);
-//         }
-//     };
-//     xhttp.open("GET", "revenue-donut.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
-//     xhttp.send(); 
-// }
+
     // Function to handle year selection change without refreshing the page
     document.getElementById("yearDropdown").addEventListener("change", function() {
         var selectedYear = this.value;
         var selectedMonth = document.getElementById("monthFilter").value;
-        // updateDonut(selectedYear, selectedMonth);
-        updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
-        updateTotalIPD(selectedYear, selectedMonth); // Call to update IPD
+        var selectedDepartment = document.getElementById("deptFilter").value; // Add this line
+        updateTotalPatients(selectedYear, selectedMonth, selectedDepartment); // Call to update total patients
+        updateTotalIPD(selectedYear, selectedMonth, selectedDepartment); // Call to update IPD
     });
     // Function to handle month selection change without refreshing the page
     document.getElementById("monthFilter").addEventListener("change", function() {
         var selectedYear = document.getElementById("yearDropdown").value;
         var selectedMonth = this.value;
-        // updateDonut(selectedYear, selectedMonth);
-        updateTotalPatients(selectedYear, selectedMonth); // Call to update total patients
-        updateTotalIPD(selectedYear, selectedMonth); // Call to update IPD
+        var selectedDepartment = document.getElementById("deptFilter").value; // Add this line
+        updateTotalPatients(selectedYear, selectedMonth, selectedDepartment); // Call to update total patients
+        updateTotalIPD(selectedYear, selectedMonth, selectedDepartment); // Call to update IPD
     });
+
 // Function to update the total patient count using AJAX
-function updateTotalPatients(selectedYear, selectedMonth) {
+function updateTotalPatients(selectedYear, selectedMonth, selectedDepartment) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -147,8 +138,9 @@ function updateTotalPatients(selectedYear, selectedMonth) {
     xhttp.open("GET", "revenue-totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send();
 }
+
 // Function to update the total IPD count using AJAX
-function updateTotalIPD(selectedYear, selectedMonth) {
+function updateTotalIPD(selectedYear, selectedMonth, selectedDepartment) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -158,8 +150,28 @@ function updateTotalIPD(selectedYear, selectedMonth) {
     xhttp.open("GET", "revenue-totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send();
 }
+
+// Function to handle department selection change without refreshing the page
+document.getElementById("deptFilter").addEventListener("change", function() {
+    var selectedYear = document.getElementById("yearDropdown").value;
+    var selectedMonth = document.getElementById("monthFilter").value;
+    var selectedDepartment = this.value;
+    updateTotalRevenue(selectedYear, selectedMonth, selectedDepartment); // Call to update total revenue for the selected department
+});
+
+// Function to update the total revenue of the selected department using AJAX
+function updateTotalRevenue(selectedYear, selectedMonth, selectedDepartment) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("revDept").innerHTML = this.responseText;
+        }
+    };
+    xhttp.open("GET", "revenue-department.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
+    xhttp.send();
+    console.log (selectedDepartment)
+}
 </script>
 <footer></footer>
 </body>
 </html>
-
