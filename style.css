@@ -294,7 +294,7 @@ body {
   box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   position: relative;
-  width: 1350px;
+  width: 1430px;
   padding: 60px;
   margin: 10px;
   height: 270px;
@@ -312,4 +312,22 @@ body {
 }
 .Number-box {
   position: relative;
+}
+
+.perDept {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 25px; /* Half of the height */
+  position: relative;
+  width: 220px;
+  padding: 20px; /* Adjust padding accordingly */
+  margin: 10px;
+  height: 355px;
+  overflow: hidden;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 56, 68, 1) 0%,
+    rgba(163, 217, 185, 1) 51.5%,
+    rgb(203, 219, 200) 88.6%
+  );
+  color: white;
 }

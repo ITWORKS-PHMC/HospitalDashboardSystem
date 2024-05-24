@@ -5,8 +5,9 @@ require 'connection.php';
 $yearQuery = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
 $yearResult = mysqli_query($conn, $yearQuery);
 
-$deptQuery = "SELECT revenue_department FROM dashboard_revenue";
+$deptQuery = "SELECT DISTINCT revenue_department FROM dashboard_revenue";
 $deptResult = mysqli_query($conn, $deptQuery);
+
 // Get selected month from the URL parameter
 $selected_month = isset($_GET['selected_month']) ? $_GET['selected_month'] : date('m');
 // Get selected year from the URL parameter
@@ -26,7 +27,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     <div class="button" style="margin-left: auto;">
         <!-- Year dropdown form -->
         <form id="YearForm" action="revenue-dashboard.php" method="GET">
-            <select class="Filter-button" id="yearDropdown" name="selected_year" >
+            <select class="Filter-button" id="yearDropdown" name="selected_year">
                 <?php
                 while ($yearRow = mysqli_fetch_assoc($yearResult)) {
                     ?>
@@ -38,7 +39,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
             <input type="hidden" name="selected_month" value="<?php echo $selected_month; ?>">
         </form>
         <form id="monthForm">
-            <select class = "Filter-button" id="monthFilter" name="selected_month">
+            <select class="Filter-button" id="monthFilter" name="selected_month">
                 <?php
                 // Generate options for each month
                 for($i = 1; $i <= 12; $i++) {
@@ -70,28 +71,27 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
             </div>
         <div class="dept-rev-box" style="grid-row: 2/3;">
         <form id="deptForm" >
-            <p style="text-align:center; font-weight:bold;">SELECT  DEPARTMENT :</p>
+            <p style="text-align:center; font-weight:bold;">SELECT DEPARTMENT :</p>
         <select class="Filter-button" id="deptFilter" name="selected_department" style="width:270px;">
+            <option value="all">See All</option>
         <?php
         if ($deptResult) {
-        $seenDepartments = array();  // Array to keep track of seen departments
+            $seenDepartments = array();
             while ($deptRow = mysqli_fetch_assoc($deptResult)) {
                 if (!in_array($deptRow['revenue_department'], $seenDepartments)) {
-                // Add the department name to the array if it has not been seen before
-                $seenDepartments[] = $deptRow['revenue_department'];
-                echo '<option value="' . $deptRow['revenue_department'] . '">' . $deptRow['revenue_department'] . '</option>';
+                    $seenDepartments[] = $deptRow['revenue_department'];
+                    echo '<option value="' . $deptRow['revenue_department'] . '">' . $deptRow['revenue_department'] . '</option>';
+                }
             }
+        } else {
+            echo "Error: " . $deptQuery . "<br>" . mysqli_error($conn);
         }
-            } else {
-                echo "Error: " . $deptQuery . "<br>" . mysqli_error($conn);
-            }
         ?>
-
         </select>
     </form>
-        <div class="perDept">
-            <div id = "revDept">
-            <?php include 'revenue-department.php';?>
+        <div class="perDept" style="background-color:white;">
+            <div id="revDept" class="scroll-container" style="height:100px;"> 
+                <?php include 'revenue-department.php'; ?>
             </div>
         </div>
         </div>
@@ -105,72 +105,64 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     </div>
 </div>
 
-
-
 <!-- JavaScript for AJAX -->
 <script>
-
-    // Function to handle year selection change without refreshing the page
     document.getElementById("yearDropdown").addEventListener("change", function() {
         var selectedYear = this.value;
         var selectedMonth = document.getElementById("monthFilter").value;
-        var selectedDepartment = document.getElementById("deptFilter").value; // Add this line
-        updateTotalPatients(selectedYear, selectedMonth, selectedDepartment); // Call to update total patients
-        updateTotalIPD(selectedYear, selectedMonth, selectedDepartment); // Call to update IPD
+        var selectedDepartment = document.getElementById("deptFilter").value;
+        updateTotalPatients(selectedYear, selectedMonth, selectedDepartment);
+        updateTotalIPD(selectedYear, selectedMonth, selectedDepartment);
     });
-    // Function to handle month selection change without refreshing the page
+
     document.getElementById("monthFilter").addEventListener("change", function() {
         var selectedYear = document.getElementById("yearDropdown").value;
         var selectedMonth = this.value;
-        var selectedDepartment = document.getElementById("deptFilter").value; // Add this line
-        updateTotalPatients(selectedYear, selectedMonth, selectedDepartment); // Call to update total patients
-        updateTotalIPD(selectedYear, selectedMonth, selectedDepartment); // Call to update IPD
+        var selectedDepartment = document.getElementById("deptFilter").value;
+        updateTotalPatients(selectedYear, selectedMonth, selectedDepartment);
+        updateTotalIPD(selectedYear, selectedMonth, selectedDepartment);
     });
 
-// Function to update the total patient count using AJAX
-function updateTotalPatients(selectedYear, selectedMonth, selectedDepartment) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("boxtotalpatient").innerHTML = this.responseText;
-        }
-    };
-    xhttp.open("GET", "revenue-totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
-    xhttp.send();
-}
+    document.getElementById("deptFilter").addEventListener("change", function() {
+        var selectedYear = document.getElementById("yearDropdown").value;
+        var selectedMonth = document.getElementById("monthFilter").value;
+        var selectedDepartment = this.value;
+        updateTotalRevenue(selectedYear, selectedMonth, selectedDepartment);
+    });
 
-// Function to update the total IPD count using AJAX
-function updateTotalIPD(selectedYear, selectedMonth, selectedDepartment) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("boxtotalIPD").innerHTML = this.responseText;
-        }
-    };
-    xhttp.open("GET", "revenue-totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
-    xhttp.send();
-}
+    function updateTotalPatients(selectedYear, selectedMonth, selectedDepartment) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("boxtotalpatient").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "revenue-totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
+        xhttp.send();
+    }
 
-// Function to handle department selection change without refreshing the page
-document.getElementById("deptFilter").addEventListener("change", function() {
-    var selectedYear = document.getElementById("yearDropdown").value;
-    var selectedMonth = document.getElementById("monthFilter").value;
-    var selectedDepartment = this.value;
-    updateTotalRevenue(selectedYear, selectedMonth, selectedDepartment); // Call to update total revenue for the selected department
-});
+    function updateTotalIPD(selectedYear, selectedMonth, selectedDepartment) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("boxtotalIPD").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "revenue-totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
+        xhttp.send();
+    }
 
-// Function to update the total revenue of the selected department using AJAX
-function updateTotalRevenue(selectedYear, selectedMonth, selectedDepartment) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("revDept").innerHTML = this.responseText;
-        }
-    };
-    xhttp.open("GET", "revenue-department.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
-    xhttp.send();
-    console.log (selectedDepartment)
-}
+    function updateTotalRevenue(selectedYear, selectedMonth, selectedDepartment) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("revDept").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", "revenue-department.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
+        xhttp.send();
+        console.log(selectedDepartment)
+    }
 </script>
 <footer></footer>
 </body>

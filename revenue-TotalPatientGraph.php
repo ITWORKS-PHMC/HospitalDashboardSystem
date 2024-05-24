@@ -57,7 +57,8 @@ while ($row = mysqli_fetch_assoc($result_currentYear)) {
 }
 
 // Query to fetch data for chart 2 (monthly data for various departments)
-$sql_chart2 = "SELECT MONTH(revenue_date) AS month,
+$sql_chart2 = "SELECT YEAR(revenue_date) AS year,
+              MONTH(revenue_date) AS month,
               SUM(CASE WHEN revenue_department = 'CT-SCAN' THEN revenue_totalAmount ELSE 0 END) AS total_ctscan,
               SUM(CASE WHEN revenue_department = 'DIABETES CLINIC' THEN revenue_totalAmount ELSE 0 END) AS total_diabetes_clinic,
               SUM(CASE WHEN revenue_department = 'DIETARY' THEN revenue_totalAmount ELSE 0 END) AS total_dietary,
@@ -73,8 +74,8 @@ $sql_chart2 = "SELECT MONTH(revenue_date) AS month,
               WHERE YEAR(revenue_date) = $selectedYear
               GROUP BY YEAR(revenue_date), MONTH(revenue_date)";
 
-
 $result_chart2 = $conn->query($sql_chart2);
+
 $dataPoints_ctscan = array();
 $dataPoints_diabetes_clinic = array();
 $dataPoints_dietary = array();
@@ -85,22 +86,24 @@ $dataPoints_fifth_floor_b1 = array();
 $dataPoints_fifth_floor_b2 = array();
 $dataPoints_ghms = array();
 $dataPoints_hearing_center = array();
+
 // Check if any rows were returned for chart 2
 if ($result_chart2->num_rows > 0) {
     // Loop through each row of data for chart 2
     while($row = $result_chart2->fetch_assoc()) {
-        // Populate dataPoints arrays with fetched data for each department
         $month = date("F", mktime(0, 0, 0, $row["month"], 1)); // Get the name of the month
-        $dataPoints_ctscan[] = array("y" => $row["total_ctscan"], "label" => $month);
-        $dataPoints_diabetes_clinic[] = array("y" => $row["total_diabetes_clinic"], "label" => $month);
-        $dataPoints_dietary[] = array("y" => $row["total_dietary"], "label" => $month);
-        $dataPoints_doctors_wing[] = array("y" => $row["total_doctors_wing"], "label" => $month);
-        $dataPoints_emergency_room[] = array("y" => $row["total_emergency_room"], "label" => $month);
-        $dataPoints_eye_center[] = array("y" => $row["total_eye_center"], "label" => $month);
-        $dataPoints_fifth_floor_b1[] = array("y" => $row["total_fifth_floor_b1"], "label" => $month);
-        $dataPoints_fifth_floor_b2[] = array("y" => $row["total_fifth_floor_b2"], "label" => $month);
-        $dataPoints_ghms[] = array("y" => $row["total_ghms"], "label" => $month);
-        $dataPoints_hearing_center[] = array("y" => $row["total_hearing_center"], "label" => $month);
+        
+        // Populate data points arrays for each department
+        $dataPoints_ctscan[] = array("y" => $row["total_ctscan"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_diabetes_clinic[] = array("y" => $row["total_diabetes_clinic"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_dietary[] = array("y" => $row["total_dietary"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_doctors_wing[] = array("y" => $row["total_doctors_wing"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_emergency_room[] = array("y" => $row["total_emergency_room"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_eye_center[] = array("y" => $row["total_eye_center"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_fifth_floor_b1[] = array("y" => $row["total_fifth_floor_b1"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_fifth_floor_b2[] = array("y" => $row["total_fifth_floor_b2"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_ghms[] = array("y" => $row["total_ghms"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_hearing_center[] = array("y" => $row["total_hearing_center"], "label" => $month, "year" => $selectedYear);
     }
 } else {
     echo "0 results";
@@ -126,13 +129,6 @@ if ($result_chart2->num_rows > 0) {
 
 
 <script>
-// Define the filterData function globally
-function filterData(dataPoints, selectedMonthLabel) {
-    return dataPoints.filter(function(dataPoint) {
-        // Check if the data point's label matches the selected month label
-        return dataPoint.label === selectedMonthLabel;
-    });
-}
 window.onload = function () {
     var dataPoints_currentYear = <?php echo json_encode($dataPoints_currentYear, JSON_NUMERIC_CHECK); ?>;
     var dataPoints_previousYear = <?php echo json_encode($dataPoints_previousYear, JSON_NUMERIC_CHECK); ?>;
@@ -147,7 +143,9 @@ window.onload = function () {
     var dataPoints_ghms = <?php echo json_encode($dataPoints_ghms, JSON_NUMERIC_CHECK); ?>;
     var dataPoints_hearing_center = <?php echo json_encode($dataPoints_hearing_center, JSON_NUMERIC_CHECK); ?>;
 
-    // Render chart1 with default data for the current year
+    function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
     var chart = new CanvasJS.Chart("chartContainer", {
         animationEnabled: true,
         title: {
@@ -159,7 +157,15 @@ window.onload = function () {
         },
         backgroundColor: "transparent",
         toolTip: {
-            shared: true 
+            shared: true,
+             contentFormatter: function (e) {
+            var content = " ";
+            for (var i = 0; i < e.entries.length; i++) {
+                var dataPoint = e.entries[i].dataPoint;
+                content += "<strong>" + e.entries[i].dataSeries.name + "</strong>: <span style='color:" + e.entries[i].dataSeries.color + "'>₱" + numberWithCommas(dataPoint.y) + "</span><br/>";
+            }
+            return content;
+        }
         },
         legend: {
             verticalAlign: "center",
@@ -196,73 +202,81 @@ window.onload = function () {
         },
         backgroundColor: "transparent",
         toolTip: {
-            shared: true // This will ensure all series data is shown in the tooltip
+            shared: true,
+            contentFormatter: function (e) {
+            var content = " ";
+            for (var i = 0; i < e.entries.length; i++) {
+                var dataPoint = e.entries[i].dataPoint;
+                content += "<strong>" + e.entries[i].dataSeries.name + "</strong>: <span style='color:" + e.entries[i].dataSeries.color + "'>₱" + numberWithCommas(dataPoint.y) + "</span><br/>";
+            }
+            return content;
+        }
         },
         data: [{
-            type: "bar",
+            type: "column",
             name: "CT-Scan",
             showInLegend: true,
             color: "red",
             dataPoints: dataPoints_ctscan
         },
         {
-            type: "bar",
+            type: "column",
             name: "Diabetes",
             showInLegend: true,
             color: "orange",
             dataPoints: dataPoints_diabetes_clinic
         },
         {
-            type: "bar",
+            type: "column",
             name: "Dietary",
             showInLegend: true,
             color: "green",
             dataPoints: dataPoints_dietary
         },
         {
-            type: "bar",
+            type: "column",
             name: "Doctors Wing",
             showInLegend: true,
             color: "black",
             dataPoints: dataPoints_doctors_wing
         },
         {
-            type: "bar",
+            type: "column",
             name: "Emergency Room",
             showInLegend: true,
             color: "teal",
             dataPoints: dataPoints_emergency_room
         },
         {
-            type: "bar",
+            type: "column",
             name: "Eye Center",
             showInLegend: true,
             color: "aqua",
             dataPoints: dataPoints_eye_center
         },
         {
-            type: "bar",
+            type: "column",
             name: "Fifth Floor Wing B1",
             showInLegend: true,
             color: "blue",
             dataPoints: dataPoints_fifth_floor_b1
         },
         {
-            type: "bar",
+            type: "column",
             name: "Fifth Floor Wing B2",
             showInLegend: true,
             color: "purple",
             dataPoints: dataPoints_fifth_floor_b2
         },
         {
-            type: "bar",
+            type: "column",
             name: "GHMS",
             showInLegend: true,
-            color: "yellow",
+            color: "black",
             dataPoints: dataPoints_ghms
         },
         {
-            type: "bar",
+            type: "column",
             name: "Hearing Center",
             showInLegend: true,
             color: "cyan",
@@ -272,19 +286,20 @@ window.onload = function () {
 
     chart.render();
     chart2.render();
-            // Update chart data when year dropdown changes
-            document.getElementById("yearDropdown").addEventListener("change", function() {
-                selectedYear = this.value;
-                updateChartData(selectedYear);
-                var selectedMonth = document.getElementById("monthFilter").value;
-                updateChartData2(selectedYear, selectedMonth);
-            });
+    // Update chart data when year dropdown changes
+    document.getElementById("yearDropdown").addEventListener("change", function () {
+        var selectedYear = this.value;
+        updateChartData(selectedYear);
+        var selectedMonth = document.getElementById("monthFilter").value;
+        updateChartData2(selectedYear, selectedMonth); // Pass selectedYear here
+    });
 
-            // Update chart data when month filter changes
-            document.getElementById("monthFilter").addEventListener("change", function() {
-                var selectedMonth = this.value;
-                updateChartData2(selectedYear, selectedMonth);
-            });
+    // Update chart data when month filter changes
+    document.getElementById("monthFilter").addEventListener("change", function () {
+        var selectedMonth = this.value;
+        var selectedYear = document.getElementById("yearDropdown").value; // Get selected year
+        updateChartData2(selectedYear, selectedMonth);
+    });
 
     function updateChartData(year) {
         var newDataPointsCurrentYear = <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>;
@@ -304,38 +319,36 @@ window.onload = function () {
         chart.options.data[1].name = (year - 1).toString();
         chart.render();
     }
-
 function updateChartData2(year, month) {
-    var monthLabel = new Date(year, month - 1).toLocaleString('default', { month: 'long' }); // Get full month name
+    var monthLabel = new Date(year, month - 1).toLocaleString('default', { month: 'long' }); 
+    var yearLabel = year.toString(); // Convert the year to string
+    var yearMonthLabel = monthLabel + " " + yearLabel; // Concatenate month and year labels
 
     console.log("Selected Year:", year);
     console.log("Selected Month:", month);
     console.log("Selected Month Label:", monthLabel);
 
-    function filterData(dataPoints, selectedMonthLabel) {
+function filterData(dataPoints, selectedMonth, selectedYear) {
     return dataPoints.filter(function(dataPoint) {
-        // Check if the data point's label matches the selected month label
-        return dataPoint.label === selectedMonthLabel;
+        // Check if the label matches the selected month
+        const monthMatches = dataPoint.label === selectedMonth;
+        // Check if the year matches the selected year or if 2023 is selected
+        const yearMatches = dataPoint.year.toString() === selectedYear.toString() || selectedYear === '2023';
+        return monthMatches && yearMatches;
     });
 }
+    chart2.options.title.text = "Monthly Revenue for " + yearMonthLabel;
+    chart2.options.data[0].dataPoints = filterData(dataPoints_ctscan, monthLabel, yearLabel);
+    chart2.options.data[1].dataPoints = filterData(dataPoints_diabetes_clinic, monthLabel, yearLabel);
+    chart2.options.data[2].dataPoints = filterData(dataPoints_dietary, monthLabel, yearLabel);
+    chart2.options.data[3].dataPoints = filterData(dataPoints_doctors_wing, monthLabel, yearLabel);
+    chart2.options.data[4].dataPoints = filterData(dataPoints_emergency_room, monthLabel, yearLabel);
+    chart2.options.data[5].dataPoints = filterData(dataPoints_eye_center, monthLabel, yearLabel);
+    chart2.options.data[6].dataPoints = filterData(dataPoints_fifth_floor_b1, monthLabel, yearLabel);
+    chart2.options.data[7].dataPoints = filterData(dataPoints_fifth_floor_b2, monthLabel, yearLabel);
+    chart2.options.data[8].dataPoints = filterData(dataPoints_ghms, monthLabel, yearLabel);
+    chart2.options.data[9].dataPoints = filterData(dataPoints_hearing_center, monthLabel, yearLabel);
 
-
-    // Update chart2 title to reflect the selected month and year
-    chart2.options.title.text = "Monthly Revenue for " + monthLabel + " " + year;
-
-    // Update chart2 data for each department based on the selected month and year
-    chart2.options.data[0].dataPoints = filterData(dataPoints_ctscan, monthLabel);
-    chart2.options.data[1].dataPoints = filterData(dataPoints_diabetes_clinic, monthLabel);
-    chart2.options.data[2].dataPoints = filterData(dataPoints_dietary, monthLabel);
-    chart2.options.data[3].dataPoints = filterData(dataPoints_doctors_wing, monthLabel);
-    chart2.options.data[4].dataPoints = filterData(dataPoints_emergency_room, monthLabel);
-    chart2.options.data[5].dataPoints = filterData(dataPoints_eye_center, monthLabel);
-    chart2.options.data[6].dataPoints = filterData(dataPoints_fifth_floor_b1, monthLabel);
-    chart2.options.data[7].dataPoints = filterData(dataPoints_fifth_floor_b2, monthLabel);
-    chart2.options.data[8].dataPoints = filterData(dataPoints_ghms, monthLabel);
-    chart2.options.data[9].dataPoints = filterData(dataPoints_hearing_center, monthLabel);
-
-    // Render chart2
     chart2.render();
 }
 }
