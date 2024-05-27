@@ -2,7 +2,7 @@
 require 'connection.php';
 
 // Fetch distinct years from the dashboard_census table
-$yearQuery = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
+$yearQuery = "SELECT DISTINCT YEAR(revenue_date) AS year FROM dashboard_revenue";
 $yearResult = mysqli_query($conn, $yearQuery);
 
 $deptQuery = "SELECT DISTINCT revenue_department FROM dashboard_revenue";
@@ -38,7 +38,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
             </select>
             <input type="hidden" name="selected_month" value="<?php echo $selected_month; ?>">
         </form>
-        <form id="monthForm">
+        <form id="monthForm" method="GET">
             <select class="Filter-button" id="monthFilter" name="selected_month">
                 <?php
                 // Generate options for each month
@@ -89,10 +89,10 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         ?>
         </select>
     </form>
-        <div class="perDept" style="background-color:white;">
-            <div id="revDept" class="scroll-container" style="height:100px;"> 
-                <?php include 'revenue-department.php'; ?>
-            </div>
+        <div class="perDept" style="background-color:white;width:230px;">
+            <div id="revDept" class="scroll-container" style="height:350px;overflow-y:auto; color:black;width:230px;"> 
+                    <?php include 'revenue-department.php'; ?>
+                  </div>
         </div>
         </div>
         </div>

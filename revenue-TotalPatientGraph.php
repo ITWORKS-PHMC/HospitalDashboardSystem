@@ -1,14 +1,7 @@
 <?php
 require 'connection.php';
 
-$selectedYear = date('Y');
-
-// Update selected year based on dropdown menu selection
-if(isset($_POST['yearDropdown'])) {
-    $selectedYear = $_POST['yearDropdown'];
-}
-
-// Fetch data from the database
+// Fetch data for chart1 
 $sql = "SELECT YEAR(revenue_date) AS year, MONTH(revenue_date) AS month, SUM(revenue_totalAmount) AS total 
         FROM dashboard_revenue
         GROUP BY YEAR(revenue_date), MONTH(revenue_date)";
@@ -55,9 +48,17 @@ while ($row = mysqli_fetch_assoc($result_currentYear)) {
     $total = $row['total'];
     $dataPoints_currentYear[$month]["y"] = $total;
 }
+// ----------------------------------------------------------------------------------------------
+// FETCH DATA FOR CHART2
+$selectedYear = date('Y');
+
+// Update selected year based on dropdown menu selection
+if (isset($_GET['yearDropdown'])) {
+    $selectedYear = $_GET['yearDropdown'];
+}
 
 // Query to fetch data for chart 2 (monthly data for various departments)
-$sql_chart2 = "SELECT YEAR(revenue_date) AS year,
+$sql_chart2 = "SELECT DISTINCT YEAR(revenue_date) AS year,
               MONTH(revenue_date) AS month,
               SUM(CASE WHEN revenue_department = 'CT-SCAN' THEN revenue_totalAmount ELSE 0 END) AS total_ctscan,
               SUM(CASE WHEN revenue_department = 'DIABETES CLINIC' THEN revenue_totalAmount ELSE 0 END) AS total_diabetes_clinic,
@@ -66,12 +67,10 @@ $sql_chart2 = "SELECT YEAR(revenue_date) AS year,
               SUM(CASE WHEN revenue_department = 'EMERGENCY ROOM' THEN revenue_totalAmount ELSE 0 END) AS total_emergency_room,
               SUM(CASE WHEN revenue_department = 'EYE CENTER' THEN revenue_totalAmount ELSE 0 END) AS total_eye_center,
               SUM(CASE WHEN revenue_department = 'FIFTH FLOOR WING B1' THEN revenue_totalAmount ELSE 0 END) AS total_fifth_floor_b1,
-              SUM(CASE WHEN revenue_department = 'FIFTh FLOOR WING B2' THEN revenue_totalAmount ELSE 0 END) AS total_fifth_floor_b2,
+              SUM(CASE WHEN revenue_department = 'FIFTH FLOOR WING B2' THEN revenue_totalAmount ELSE 0 END) AS total_fifth_floor_b2,
               SUM(CASE WHEN revenue_department = 'GHMS 2' THEN revenue_totalAmount ELSE 0 END) AS total_ghms,
-              SUM(CASE WHEN revenue_department = 'HEARING CENTER' THEN revenue_totalAmount ELSE 0 END) AS total_hearing_center,
-              SUM(revenue_totalAmount) AS total_revenue 
+              SUM(CASE WHEN revenue_department = 'HEARING CENTER' THEN revenue_totalAmount ELSE 0 END) AS total_hearing_center
               FROM dashboard_revenue
-              WHERE YEAR(revenue_date) = $selectedYear
               GROUP BY YEAR(revenue_date), MONTH(revenue_date)";
 
 $result_chart2 = $conn->query($sql_chart2);
@@ -90,26 +89,27 @@ $dataPoints_hearing_center = array();
 // Check if any rows were returned for chart 2
 if ($result_chart2->num_rows > 0) {
     // Loop through each row of data for chart 2
-    while($row = $result_chart2->fetch_assoc()) {
-        $month = date("F", mktime(0, 0, 0, $row["month"], 1)); // Get the name of the month
+    while ($row = $result_chart2->fetch_assoc()) {
+        $year = $row["year"];
+        $month = $row["month"];
+        $monthLabel = date("F", mktime(0, 0, 0, $month, 1)); // Get the name of the month
         
         // Populate data points arrays for each department
-        $dataPoints_ctscan[] = array("y" => $row["total_ctscan"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_diabetes_clinic[] = array("y" => $row["total_diabetes_clinic"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_dietary[] = array("y" => $row["total_dietary"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_doctors_wing[] = array("y" => $row["total_doctors_wing"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_emergency_room[] = array("y" => $row["total_emergency_room"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_eye_center[] = array("y" => $row["total_eye_center"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_fifth_floor_b1[] = array("y" => $row["total_fifth_floor_b1"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_fifth_floor_b2[] = array("y" => $row["total_fifth_floor_b2"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_ghms[] = array("y" => $row["total_ghms"], "label" => $month, "year" => $selectedYear);
-        $dataPoints_hearing_center[] = array("y" => $row["total_hearing_center"], "label" => $month, "year" => $selectedYear);
+        $dataPoints_ctscan[] = array("y" => $row["total_ctscan"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_diabetes_clinic[] = array("y" => $row["total_diabetes_clinic"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_dietary[] = array("y" => $row["total_dietary"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_doctors_wing[] = array("y" => $row["total_doctors_wing"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_emergency_room[] = array("y" => $row["total_emergency_room"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_eye_center[] = array("y" => $row["total_eye_center"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_fifth_floor_b1[] = array("y" => $row["total_fifth_floor_b1"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_fifth_floor_b2[] = array("y" => $row["total_fifth_floor_b2"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_ghms[] = array("y" => $row["total_ghms"], "label" => $monthLabel, "year" => $year, "month" => $month);
+        $dataPoints_hearing_center[] = array("y" => $row["total_hearing_center"], "label" => $monthLabel, "year" => $year, "month" => $month);
     }
 } else {
     echo "0 results";
 }
 ?>
-
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -132,7 +132,7 @@ if ($result_chart2->num_rows > 0) {
 window.onload = function () {
     var dataPoints_currentYear = <?php echo json_encode($dataPoints_currentYear, JSON_NUMERIC_CHECK); ?>;
     var dataPoints_previousYear = <?php echo json_encode($dataPoints_previousYear, JSON_NUMERIC_CHECK); ?>;
-    var dataPoints_ctscan = <?php echo json_encode($dataPoints_ctscan, JSON_NUMERIC_CHECK); ?>;
+   var dataPoints_ctscan = <?php echo json_encode($dataPoints_ctscan, JSON_NUMERIC_CHECK); ?>;
     var dataPoints_diabetes_clinic = <?php echo json_encode($dataPoints_diabetes_clinic, JSON_NUMERIC_CHECK); ?>;
     var dataPoints_dietary = <?php echo json_encode($dataPoints_dietary, JSON_NUMERIC_CHECK); ?>;
     var dataPoints_doctors_wing = <?php echo json_encode($dataPoints_doctors_wing, JSON_NUMERIC_CHECK); ?>;
@@ -291,7 +291,7 @@ window.onload = function () {
         var selectedYear = this.value;
         updateChartData(selectedYear);
         var selectedMonth = document.getElementById("monthFilter").value;
-        updateChartData2(selectedYear, selectedMonth); // Pass selectedYear here
+        updateChartData2(selectedYear, selectedMonth); 
     });
 
     // Update chart data when month filter changes
@@ -320,37 +320,39 @@ window.onload = function () {
         chart.render();
     }
 function updateChartData2(year, month) {
-    var monthLabel = new Date(year, month - 1).toLocaleString('default', { month: 'long' }); 
-    var yearLabel = year.toString(); // Convert the year to string
-    var yearMonthLabel = monthLabel + " " + yearLabel; // Concatenate month and year labels
+    var monthLabel = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
+    var yearLabel = year.trim();
 
-    console.log("Selected Year:", year);
+    console.log("Selected Year:", yearLabel);
     console.log("Selected Month:", month);
     console.log("Selected Month Label:", monthLabel);
 
-function filterData(dataPoints, selectedMonth, selectedYear) {
-    return dataPoints.filter(function(dataPoint) {
-        // Check if the label matches the selected month
-        const monthMatches = dataPoint.label === selectedMonth;
-        // Check if the year matches the selected year or if 2023 is selected
-        const yearMatches = dataPoint.year.toString() === selectedYear.toString() || selectedYear === '2023';
-        return monthMatches && yearMatches;
-    });
-}
-    chart2.options.title.text = "Monthly Revenue for " + yearMonthLabel;
-    chart2.options.data[0].dataPoints = filterData(dataPoints_ctscan, monthLabel, yearLabel);
-    chart2.options.data[1].dataPoints = filterData(dataPoints_diabetes_clinic, monthLabel, yearLabel);
-    chart2.options.data[2].dataPoints = filterData(dataPoints_dietary, monthLabel, yearLabel);
-    chart2.options.data[3].dataPoints = filterData(dataPoints_doctors_wing, monthLabel, yearLabel);
-    chart2.options.data[4].dataPoints = filterData(dataPoints_emergency_room, monthLabel, yearLabel);
-    chart2.options.data[5].dataPoints = filterData(dataPoints_eye_center, monthLabel, yearLabel);
-    chart2.options.data[6].dataPoints = filterData(dataPoints_fifth_floor_b1, monthLabel, yearLabel);
-    chart2.options.data[7].dataPoints = filterData(dataPoints_fifth_floor_b2, monthLabel, yearLabel);
-    chart2.options.data[8].dataPoints = filterData(dataPoints_ghms, monthLabel, yearLabel);
-    chart2.options.data[9].dataPoints = filterData(dataPoints_hearing_center, monthLabel, yearLabel);
+    function filterData(dataPoints, selectedMonth, selectedYear) {
+        selectedYear = selectedYear.trim();
+        selectedMonth = parseInt(selectedMonth);
+        return dataPoints.filter(function(dataPoint) {
+            var monthMatches = dataPoint.month === selectedMonth;
+            var yearMatches = dataPoint.year.toString() === selectedYear;
+            return monthMatches && yearMatches;
+        });
+    }
 
+    chart2.options.title.text = "Monthly Revenue for " + monthLabel + " " + yearLabel;
+    
+    chart2.options.data[0].dataPoints = filterData(dataPoints_ctscan, month, year);
+    chart2.options.data[1].dataPoints = filterData(dataPoints_diabetes_clinic, month, year);
+    chart2.options.data[2].dataPoints = filterData(dataPoints_dietary, month, year);
+    chart2.options.data[3].dataPoints = filterData(dataPoints_doctors_wing, month, year);
+    chart2.options.data[4].dataPoints = filterData(dataPoints_emergency_room, month, year);
+    chart2.options.data[5].dataPoints = filterData(dataPoints_eye_center, month, year);
+    chart2.options.data[6].dataPoints = filterData(dataPoints_fifth_floor_b1, month, year);
+    chart2.options.data[7].dataPoints = filterData(dataPoints_fifth_floor_b2, month, year);
+    chart2.options.data[8].dataPoints = filterData(dataPoints_ghms, month, year);
+    chart2.options.data[9].dataPoints = filterData(dataPoints_hearing_center, month, year);
+    chart2.options.animationEnabled = true;
     chart2.render();
 }
+
 }
 </script>
 

@@ -18,6 +18,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>  
     <?php include("./lib/nav-bar.php")?>
+    <script src="./lib/script.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>

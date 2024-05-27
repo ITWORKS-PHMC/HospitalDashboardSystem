@@ -15,7 +15,8 @@ $sql = "SELECT SUM(total_census) as totalcensus_id
 $result = $conn->query($sql);
 
 // Check if there are results
-if ($result->num_rows > 0) {
+if ($result === false) {
+} elseif ($result->num_rows > 0) {
     // Fetch the total IPD count
     $row = $result->fetch_assoc();
     $totalIPD = $row["totalcensus_id"];
@@ -23,10 +24,16 @@ if ($result->num_rows > 0) {
     // SQL query to get the target value for the selected year and month
     $sql2 = "SELECT SUM(target_value) as totaltarget 
              FROM dashboard_target 
-             WHERE target_type = 'IPD'";
+             WHERE target_type = 'IPD'
+             AND YEAR(target_date) = $selected_year 
+             AND MONTH(target_date) = $selected_month";
+             
     $result2 = $conn->query($sql2);
 
-    if ($result2->num_rows > 0) {
+    if ($result2 === false) {
+        // Handle SQL error
+        echo "Error executing SQL query: " . $conn->error;
+    } elseif ($result2->num_rows > 0) {
         // Fetch the target value
         $row2 = $result2->fetch_assoc();
         $totalTarget = $row2["totaltarget"];

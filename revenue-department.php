@@ -27,24 +27,43 @@ if (!$totalRevenueResult) {
     $totalRevenueRow = mysqli_fetch_assoc($totalRevenueResult);
     $total_revenue = $totalRevenueRow['total_revenue'];
 
-    // Display total revenue
+    // Display total revenue in a separate div with inline CSS
     if (empty($total_revenue)) {
-        echo "<p style='color:white; top:10px; position: absolute;'>Total Revenue: Not Available</p>";
+        echo "<div id='total-revenue' style='color:black; font-weight:bold; margin-bottom: 20px;'>Total Revenue: Not Available</div>";
     } else {
-        echo "<p style='color:white; top:10px; position: absolute; margin: auto;'>Total Revenue: $total_revenue</p>";
+echo "<div id='total-revenue' style='color:black; font-weight:bold; margin-bottom: 20px;text-align:center;border:1px;background-color: rgba(51, 135, 131, 0.8); padding: 10px;'>Total Revenue: ₱" . format_revenue($total_revenue) . "</div>";
     }
 
-    // If "See All" is selected, display each department's revenue
+    // If "See All" is selected, display each department's revenue in a table
     if ($selected_department === 'all') {
         $departmentRevenueResult = mysqli_query($conn, $departmentRevenueQuery);
         if (!$departmentRevenueResult) {
             echo "Error: " . mysqli_error($conn);
         } else {
-                while ($departmentRevenueRow = mysqli_fetch_assoc($departmentRevenueResult)) {
-                echo "<p>" . $departmentRevenueRow['revenue_department'] . ": " . $departmentRevenueRow['department_revenue'] . "</p>";
+            // Start table with inline CSS
+            echo "<div id='department-revenue-table' style='overflow-x: auto; overflow-y: auto; max-height: 280px;'>"; // Add horizontal and vertical scroll if needed
+            echo "<table>";
+            // Table header
+            echo "<tr><th>Department</th><th>Revenue</th></tr>";
+            while ($departmentRevenueRow = mysqli_fetch_assoc($departmentRevenueResult)) {
+                // Table rows for each department's revenue
+                echo "<tr><td>" . $departmentRevenueRow['revenue_department'] . "</td><td>₱" . format_revenue($departmentRevenueRow['department_revenue']) . "</td></tr>";
             }
-            echo "</div>";
+            // End table
+            echo "</table>";
+            echo "</div>"; // Close department-revenue-table div
         }
+    }
+}
+
+// Function to format revenue with peso sign and abbreviate if more than a million or thousand
+function format_revenue($revenue) {
+    if ($revenue >= 1000000) {
+        return number_format($revenue / 1000000, 1) . 'M';
+    } elseif ($revenue >= 1000) {
+        return number_format($revenue / 1000, 1) . 'k';
+    } else {
+        return number_format($revenue);
     }
 }
 ?>

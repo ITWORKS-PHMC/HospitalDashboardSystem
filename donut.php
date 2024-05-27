@@ -28,44 +28,38 @@ $row3 = mysqli_fetch_assoc($result3);
 $totalERCensus = $row3['totalER'];
 
 // Assuming 'dashboard_target' is your table name for target values
-$sqlTvalueOPD = "SELECT * FROM dashboard_target WHERE target_type ='OPD'";
+$sqlTvalueOPD = "SELECT * FROM dashboard_target WHERE target_type ='OPD' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
 $getOPD = mysqli_query($conn, $sqlTvalueOPD);
 
 if ($getOPD) {
     $value1 = mysqli_fetch_assoc($getOPD);
     if ($value1) {
         $TValueOPD = $value1['target_value'];
-    } else {
-        echo "No data found for target_type = 'OPD'";
-    }
+    } 
 } else {
     echo "Error: " . mysqli_error($conn);
 }
 
-$sqlTvalueIPD = "SELECT * FROM dashboard_target WHERE target_type ='IPD'";
+$sqlTvalueIPD = "SELECT * FROM dashboard_target WHERE target_type ='IPD' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
 $getIPD = mysqli_query($conn, $sqlTvalueIPD);
 
 if ($getIPD) {
     $value1 = mysqli_fetch_assoc($getIPD);
     if ($value1) {
         $TValueIPD = $value1['target_value'];
-    } else {
-        echo "No data found for target_type = 'IPD'";
-    }
+    } 
 } else {
     echo "Error: " . mysqli_error($conn);
 }
 
-$sqlTvalueER = "SELECT * FROM dashboard_target WHERE target_type ='ER'";
+$sqlTvalueER = "SELECT * FROM dashboard_target WHERE target_type ='ER' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
 $getER = mysqli_query($conn, $sqlTvalueER);
 
 if ($getER) {
     $value1 = mysqli_fetch_assoc($getER);
     if ($value1) {
         $TValueER = $value1['target_value'];
-    } else {
-        echo "No data found for target_type = 'ER'";
-    }
+    } 
 } else {
     echo "Error: " . mysqli_error($conn);
 }

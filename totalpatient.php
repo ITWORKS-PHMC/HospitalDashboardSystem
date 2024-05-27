@@ -32,24 +32,27 @@ if ($result->num_rows > 0) {
     }
 
     // SQL query to get the target values for the selected year and month
-    $sql2 = "SELECT SUM(target_value) as totaltarget FROM dashboard_target";
+    $sql2 = "SELECT SUM(target_value) as totaltarget FROM dashboard_target 
+             WHERE YEAR(target_date) = $selected_year 
+             AND MONTH(target_date) = $selected_month";
+
     $result2 = $conn->query($sql2);
 
     if ($result2->num_rows > 0) {
         // Fetch the target value
         $row2 = $result2->fetch_assoc();
         $totalTarget = $row2["totaltarget"];
-        
+
         // Calculate total patients from all transaction types
         $totalPatients = $opdCount + $ipdCount + $erCount;
 
         // Compare total patients with the target value
         if ($totalPatients >= $totalTarget) {
             // Display total patients with green arrow
-            echo "<div class='result' style='top:50px;left:100px;position: absolute; color:black;'>$totalPatients<span class='green-arrow' style='float: right;'>&#8593;</span></div>";
+            echo "<div class='result' style='top:50px;left:85px;position: absolute; color:black;'>$totalPatients<span class='green-arrow' style='float: right;'>&#8593;</span></div>";
         } else {
             // Display total patients with red arrow
-            echo "<div class='result' style='top:50px;left:100px;position: absolute; color:black;'><span class='red-arrow' style='float: left;'>&#8595;</span>$totalPatients</div>";
+            echo "<div class='result' style='top:50px;left:85px;position: absolute; color:black;'><span class='red-arrow' style='float: left;'>&#8595;</span>$totalPatients</div>";
         }
     } else {
         echo "<p style='font-weight:bold;color:black; top:50px; position: absolute;'>No target set for the selected year and month</p>";
