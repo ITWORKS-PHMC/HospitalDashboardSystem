@@ -21,6 +21,14 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     <script src="./lib/script.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+<style>
+    .nav-buttonCensus {
+            background-color: rgba(0, 56, 68, 1);
+            color: white; 
+            border: none;
+            cursor: pointer;
+    }
+</style>
 <body>
    <div class="header" style="height:50px;">
     <div class="button" style="margin-left: auto;">
@@ -139,7 +147,8 @@ function updateTotalIPD(selectedYear, selectedMonth) {
     };
     xhttp.open("GET", "totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send();
-}
+    }
+
 </script>
 <footer></footer>
 </body>

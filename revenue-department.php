@@ -33,7 +33,6 @@ if (!$totalRevenueResult) {
     } else {
 echo "<div id='total-revenue' style='color:black; font-weight:bold; margin-bottom: 20px;text-align:center;border:1px;background-color: rgba(51, 135, 131, 0.8); padding: 10px;'>Total Revenue: ₱" . format_revenue($total_revenue) . "</div>";
     }
-
     // If "See All" is selected, display each department's revenue in a table
     if ($selected_department === 'all') {
         $departmentRevenueResult = mysqli_query($conn, $departmentRevenueQuery);

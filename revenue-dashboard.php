@@ -22,6 +22,14 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
     <?php include("./lib/nav-bar.php")?>
     <link rel="stylesheet" href="style.css">
 </head>
+<style>
+        .nav-buttonRevenue {
+           background-color: rgba(0, 56, 68, 1);
+            color: white; 
+            border: none;
+            cursor: pointer;
+    }
+</style>
 <body>
    <div class="header" style="height:50px;">
     <div class="button" style="margin-left: auto;">
