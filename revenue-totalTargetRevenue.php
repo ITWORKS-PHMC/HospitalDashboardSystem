@@ -26,7 +26,7 @@ if ($result->num_rows > 0) {
         $row2 = $result2->fetch_assoc();
         $totalTarget = $row2["totalTarget"];
         $totalTargetFormatted = formatNumber($totalTarget);
-        echo "<div class='result' style='top:70px;left: 35px;position: absolute; color:black; font-size: 25px;'>₱$totalRevenueFormatted / ₱$totalTargetFormatted</div>";
+        echo "<div class='result' style='top:70px;left: 35px;position: absolute; color:black; font-size: 22px;'>₱$totalRevenueFormatted / ₱$totalTargetFormatted</div>";
     } else {
         echo "No target set for the selected year and month";
     }

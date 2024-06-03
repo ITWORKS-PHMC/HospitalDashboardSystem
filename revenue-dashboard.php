@@ -68,13 +68,13 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
             <div class="boxtotalpatient">
                 <p class="boxtitle1">Total Revenue</p>
                 <div id="boxtotalpatient">
-                    <?php include 'revenue-totalpatient.php'; ?>
+                    <?php include 'revenue-totalRevenue.php'; ?>
                 </div>
             </div>
             <div class="boxtotalbed">
                 <p class="boxtitle" style="left: 25px;">Total Revenue vs Target</p>
                 <div id="boxtotalIPD">
-                    <?php include 'revenue-totalbed.php'; ?>
+                    <?php include 'revenue-totalTargetRevenue.php'; ?>
                 </div>
             </div>
         <div class="dept-rev-box" style="grid-row: 2/3;">
@@ -106,7 +106,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         </div>
         <div class="Bar-graphs-container" style="grid-column: 2 / 3;">
             <div class="line-graph">
-                <?php include 'revenue-TotalPatientGraph.php'; ?>
+                <?php include 'revenue-TotalRevenueGraphs.php'; ?>
             </div>
         </div>
         </div>
@@ -145,7 +145,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
                 document.getElementById("boxtotalpatient").innerHTML = this.responseText;
             }
         };
-        xhttp.open("GET", "revenue-totalpatient.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
+        xhttp.open("GET", "revenue-totalRevenue.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
         xhttp.send();
     }
 
@@ -156,7 +156,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
                 document.getElementById("boxtotalIPD").innerHTML = this.responseText;
             }
         };
-        xhttp.open("GET", "revenue-totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
+        xhttp.open("GET", "revenue-totalTargetRevenue.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth + "&selected_department=" + selectedDepartment, true);
         xhttp.send();
     }
 

@@ -1,12 +1,24 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = ""; 
-$database = "hospital";
+$serverName = "uphmc-dc33";
+$database = "phmc_reports";
+$uid = "census";
+$pass = "pass123";
 
-$conn = new mysqli($servername, $username, $password, $database);
-if ($conn->connect_errno) {
-    die("Conn Failed: " . $conn->connect_error);
-}
 
-?>
+$connection = [
+"Database" => $database,
+"Uid" => $uid,
+"PWD" => $pass
+];
+
+
+
+
+$conn = sqlsrv_connect($serverName,$connection);
+if(!$conn)
+die(print_r(sqlsrv_errors(),true));
+
+else // this for making sure its connected
+echo 'connection established'; // this for making sure its connected
+?>    
+
