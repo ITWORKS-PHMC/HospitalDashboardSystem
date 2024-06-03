@@ -6,42 +6,45 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 $selected_month = isset($_GET['selected_month']) ? $_GET['selected_month'] : date('m');
 
 // SQL query to count total Inpatient Department (IPD) IDs for the selected year and month
-$sql = "SELECT SUM(total_census) as totalcensus_id 
-        FROM dashboard_census 
-        WHERE YEAR(transaction_date) = $selected_year 
-        AND MONTH(transaction_date) = $selected_month
-        AND patient_transaction_type = 'I'";
+$sql = "SELECT COUNT(PK_psPatRegisters) as totalcensus_id 
+        FROM rptCensus
+        WHERE YEAR(datetimeadmitted) = $selected_year 
+        AND MONTH(datetimeadmitted) = $selected_month
+        AND pattrantype = 'I'";
 
-$result = $conn->query($sql);
+$result = sqlsrv_query($conn, $sql);
 
 // Check if there are results
 if ($result === false) {
-} elseif ($result->num_rows > 0) {
+    die(print_r(sqlsrv_errors(), true));
+} elseif (sqlsrv_has_rows($result)) {
     // Fetch the total IPD count
-    $row = $result->fetch_assoc();
+    $row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
     $totalIPD = $row["totalcensus_id"];
 
-    // SQL query to get the target value for the selected year and month
-    $sql2 = "SELECT SUM(target_value) as totaltarget 
-             FROM dashboard_target 
-             WHERE target_type = 'IPD'
-             AND YEAR(target_date) = $selected_year 
-             AND MONTH(target_date) = $selected_month";
+//     // SQL query to get the target value for the selected year and month
+//     $sql2 = "SELECT SUM(target_value) as totaltarget 
+//              FROM dashboard_target 
+//              WHERE target_type = 'IPD'
+//              AND YEAR(target_date) = $selected_year 
+//              AND MONTH(target_date) = $selected_month";
              
-    $result2 = $conn->query($sql2);
+//     $result2 = sqlsrv_query($conn, $sql2);
 
-    if ($result2 === false) {
-        // Handle SQL error
-        echo "Error executing SQL query: " . $conn->error;
-    } elseif ($result2->num_rows > 0) {
-        // Fetch the target value
-        $row2 = $result2->fetch_assoc();
-        $totalTarget = $row2["totaltarget"];
-        echo "<div class='result' style='top:70px;left: 75px;position: absolute; color:black;'>$totalIPD/$totalTarget</div>";
-    } else {
-        echo "No target set for the selected year and month";
-    }
-} else {
-    echo "No Inpatient Department (IPD) records for the selected year and month";
+//  if ($result2 === false) {
+//         // Handle SQL error
+//         die(print_r(sqlsrv_errors(), true));
+//     } elseif (sqlsrv_has_rows($result2)) {
+//         // Fetch the target value
+//         $row2 = sqlsrv_fetch_array($result2, SQLSRV_FETCH_ASSOC);
+//         $totalTarget = $row2["totaltarget"];
+//         echo "<div class='result' style='top:70px;left: 75px;position: absolute; color:black;'>$totalIPD/$totalTarget</div>";
+//     } else {
+//         echo "No target set for the selected year and month";
+//     }
+// } else {
+//     echo "No Inpatient Department (IPD) records for the selected year and month";
+// 
 }
+echo "<div class='result' style='top:70px;left: 75px;position: absolute; color:black;'> $totalIPD</div>";
 ?>

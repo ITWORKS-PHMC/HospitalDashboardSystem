@@ -12,82 +12,82 @@ if(isset($_GET['selected_year']) && isset($_GET['selected_month'])) {
 }
 
 // Assuming 'dashboard_census' is your table name
-$sql = "SELECT SUM(total_census) AS totalOPD FROM dashboard_census WHERE patient_transaction_type = 'O' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET OPD 
-$result = mysqli_query($conn, $sql);
-$row = mysqli_fetch_assoc($result);
+$sql = "SELECT COUNT(PK_psPatRegisters) AS totalOPD FROM rptCensus WHERE pattrantype = 'O' AND MONTH(datetimeadmitted) = '$selected_month' AND YEAR(datetimeadmitted) = '$selected_year'"; // GET OPD 
+$result = sqlsrv_query($conn, $sql);
+$row = sqlsrv_fetch_array($result , SQLSRV_FETCH_ASSOC);
 $totalOPDCensus = $row['totalOPD'];
 
-$sql2 = "SELECT SUM(total_census) AS totalIPD FROM dashboard_census WHERE patient_transaction_type = 'I' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET IPD
-$result2 = mysqli_query($conn, $sql2);
-$row2 = mysqli_fetch_assoc($result2);
+$sql2 = "SELECT COUNT(PK_psPatRegisters) AS totalIPD FROM rptCensus WHERE pattrantype = 'I' AND MONTH(datetimeadmitted) = '$selected_month' AND YEAR(datetimeadmitted) = '$selected_year'"; // GET IPD
+$result2 = sqlsrv_query($conn, $sql2);
+$row2 = sqlsrv_fetch_array($result2, SQLSRV_FETCH_ASSOC);
 $totalIPDCensus = $row2['totalIPD'];
 
-$sql3 = "SELECT SUM(total_census) AS totalER FROM dashboard_census WHERE patient_transaction_type = 'E' AND MONTH(transaction_date) = '$selected_month' AND YEAR(transaction_date) = '$selected_year'"; // GET ER
-$result3 = mysqli_query($conn, $sql3);
-$row3 = mysqli_fetch_assoc($result3);
+$sql3 = "SELECT COUNT(PK_psPatRegisters) AS totalER FROM rptCensus WHERE pattrantype = 'E' AND MONTH(datetimeadmitted) = '$selected_month' AND YEAR(datetimeadmitted) = '$selected_year'"; // GET ER
+$result3 = sqlsrv_query($conn, $sql3);
+$row3 = sqlsrv_fetch_array($result3, SQLSRV_FETCH_ASSOC);
 $totalERCensus = $row3['totalER'];
 
-// Assuming 'dashboard_target' is your table name for target values
-$sqlTvalueOPD = "SELECT * FROM dashboard_target WHERE target_type ='OPD' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
-$getOPD = mysqli_query($conn, $sqlTvalueOPD);
+// // Assuming 'dashboard_target' is your table name for target values
+// $sqlTvalueOPD = "SELECT * FROM rptCensus WHERE target_type ='OPD' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
+// $getOPD = sqlsrv_query($conn, $sqlTvalueOPD);
 
-if ($getOPD) {
-    $value1 = mysqli_fetch_assoc($getOPD);
-    if ($value1) {
-        $TValueOPD = $value1['target_value'];
-    } 
-} else {
-    echo "Error: " . mysqli_error($conn);
-}
+// if ($getOPD) {
+//     $value1 = sqlsrv_fetch($getOPD);
+//     if ($value1) {
+//         $TValueOPD = $value1['target_value'];
+//     } 
+// } else {
+//     echo "Error: " . sqlsrv_errors($conn);
+// }
 
-$sqlTvalueIPD = "SELECT * FROM dashboard_target WHERE target_type ='IPD' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
-$getIPD = mysqli_query($conn, $sqlTvalueIPD);
+// $sqlTvalueIPD = "SELECT * FROM dashboard_target WHERE target_type ='IPD' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
+// $getIPD = sqlsrv_query($conn, $sqlTvalueIPD);
 
-if ($getIPD) {
-    $value1 = mysqli_fetch_assoc($getIPD);
-    if ($value1) {
-        $TValueIPD = $value1['target_value'];
-    } 
-} else {
-    echo "Error: " . mysqli_error($conn);
-}
+// if ($getIPD) {
+//     $value1 = sqlsrv_fetch($getIPD);
+//     if ($value1) {
+//         $TValueIPD = $value1['target_value'];
+//     } 
+// } else {
+//     echo "Error: " . sqlsrv_errors($conn);
+// }
 
-$sqlTvalueER = "SELECT * FROM dashboard_target WHERE target_type ='ER' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
-$getER = mysqli_query($conn, $sqlTvalueER);
+// $sqlTvalueER = "SELECT * FROM dashboard_target WHERE target_type ='ER' AND YEAR(target_date) = $selected_year AND MONTH(target_date) = $selected_month";
+// $getER = sqlsrv_query($conn, $sqlTvalueER);
 
-if ($getER) {
-    $value1 = mysqli_fetch_assoc($getER);
-    if ($value1) {
-        $TValueER = $value1['target_value'];
-    } 
-} else {
-    echo "Error: " . mysqli_error($conn);
-}
+// if ($getER) {
+//     $value1 = sqlsrv_fetch($getER);
+//     if ($value1) {
+//         $TValueER = $value1['target_value'];
+//     } 
+// } else {
+//     echo "Error: " . sqlsrv_errors($conn);
+// }
 
 // Assuming 'dashboard_target' is your table name for target values
 // Check if the target value for OPD is available
-if (isset($TValueOPD) && $TValueOPD != 0) {
-    $OPDpercentage = round($totalOPDCensus /  $TValueOPD * 100);
-} else {
-    $OPDpercentage = 0; // or any default value you prefer
-}
+// if (isset($TValueOPD) && $TValueOPD != 0) {
+    $OPDpercentage = round($totalOPDCensus /  15000 * 100);
+// } else {
+//     $OPDpercentage = 0; // or any default value you prefer
+// }
 
 // Check if the target value for IPD is available
-if (isset($TValueIPD) && $TValueIPD != 0) {
-    $IPDPercentage = round($totalIPDCensus / $TValueIPD * 100);
+// if (isset($TValueIPD) && $TValueIPD != 0) {
+    $IPDPercentage = round($totalIPDCensus / 1000 * 100);
 
-} else {
-    $IPDPercentage = 0; // or any default value you prefer
-}
+// } else {
+//     $IPDPercentage = 0; // or any default value you prefer
+// }
 
-// Check if the target value for ER is available
-if (isset($TValueER) && $TValueER != 0) {
-    $ERPercentage = round($totalERCensus / $TValueER * 100);
-} else {
-    $ERPercentage = 0; // or any default value you prefer
-}
+// // Check if the target value for ER is available
+// if (isset($TValueER) && $TValueER != 0) {
+    $ERPercentage = round($totalERCensus / 2000 * 100);
+// } else {
+//     $ERPercentage = 0; // or any default value you prefer
+// }
 
-mysqli_close($conn);
+sqlsrv_close($conn);
 
 ?>
 <!DOCTYPE html>
@@ -247,6 +247,7 @@ mysqli_close($conn);
             top: 145px;
             left: 50%;
             transform-origin: bottom center;
+            transition: transform 1s cubic-bezier(0.4, 0.0, 0.2, 1);
         }
         .chart-label{
             text-align: center;
@@ -274,7 +275,7 @@ mysqli_close($conn);
                 <div class = "chart-label">
 				<p style="color:black"><strong>OPD TARGET CENSUS</strong></p>
 				<?php 
-                echo "<span style='color: black; font-weight:bold;'>Total OPD Census: " . $totalOPDCensus ."/".$TValueOPD. "</span><br>"; ?>
+                echo "<span style='color: black; font-weight:bold;'>Total OPD Census: " . $totalOPDCensus ."/". "</span><br>"; ?>
                 </div> <div class="multi-graph margin">
             <div style="top: -10px; left: calc(80% - 5px);"></div>
             <div class="graph" style="--percentage : 100; --fill: #008000 ;"> </div>
@@ -295,7 +296,7 @@ mysqli_close($conn);
 				<div class="label right">100%</div>
                 <div class = "chart-label">
 				<p class = "chart-label" style="color:black"><strong>IPD TARGET CENSUS</strong></p>
-				<?php echo "<span style='color: black; font-weight:bold;'>Total IPD Census: " . $totalIPDCensus ."/".$TValueIPD. "</span><br>"; ?>
+				<?php echo "<span style='color: black; font-weight:bold;'>Total IPD Census: " . $totalIPDCensus ."/". "</span><br>"; ?>
                 </div>
 				<div class="multi-graph margin">
             <div style="top: -10px; left: calc(80% - 5px);"></div>
@@ -317,7 +318,7 @@ mysqli_close($conn);
 				<div class="label right">100%</div>
                 <div class = "chart-label">
 				<p class = "chart-label" style="color:black"><strong>ER TARGET CENSUS</strong></p>
-				<?php echo "<span style='color: black; font-weight:bold;'>Total ER Census: " . $totalERCensus ."/".$TValueER. "</span><br>"; ?>
+				<?php echo "<span style='color: black; font-weight:bold;'>Total ER Census: " . $totalERCensus ."/". "</span><br>"; ?>
                 </div>
 				<div class="multi-graph margin">
                       <div style="top: -10px; left: calc(80% - 5px);"></div>
@@ -367,23 +368,31 @@ mysqli_close($conn);
                 arrow.remove();
             });
 
-            // Calculate arrow position for OPD
-            var opdArrow = document.createElement('div');
-            opdArrow.classList.add('arrow');
-            document.querySelector('.meter-graph1').appendChild(opdArrow);
-            opdArrow.style.transform = `translate(-50%, 0) rotate(${OPDpercentage * 1.8 - 90}deg)`;
+          var opdArrow = document.createElement('div');
+    opdArrow.classList.add('arrow');
+    document.querySelector('.meter-graph1').appendChild(opdArrow);
+    opdArrow.style.transform=`translate(-50%, 0) rotate(-90deg)`;
+    setTimeout(() => {
+        opdArrow.style.transform = `translate(-50%, 0) rotate(${OPDpercentage * 1.8 - 90}deg)`;
+    }, 100); // Adding a delay to ensure the arrow is added to the DOM before applying the transformation
 
-            // Calculate arrow position for IPD
-            var ipdArrow = document.createElement('div');
-            ipdArrow.classList.add('arrow');
-            document.querySelector('.meter-graph2').appendChild(ipdArrow);
-            ipdArrow.style.transform = `translate(-50%, 0) rotate(${IPDPercentage * 1.8 - 90}deg)`;
+    // Calculate arrow position for IPD
+    var ipdArrow = document.createElement('div');
+    ipdArrow.classList.add('arrow');
+    document.querySelector('.meter-graph2').appendChild(ipdArrow);
+    ipdArrow.style.transform=`translate(-50%, 0) rotate(-90deg)`;
+    setTimeout(() => {
+        ipdArrow.style.transform = `translate(-50%, 0) rotate(${IPDPercentage * 1.8 - 90}deg)`;
+    }, 100); // Adding a delay to ensure the arrow is added to the DOM before applying the transformation
 
-            // Calculate arrow position for ER
-            var erArrow = document.createElement('div');
-            erArrow.classList.add('arrow');
-            document.querySelector('.meter-graph3').appendChild(erArrow);
-            erArrow.style.transform = `translate(-50%, 0) rotate(${ERPercentage * 1.8 - 90}deg)`;
+    // Calculate arrow position for ER
+    var erArrow = document.createElement('div');
+    erArrow.classList.add('arrow');
+    document.querySelector('.meter-graph3').appendChild(erArrow);
+    erArrow.style.transform=`translate(-50%, 0) rotate(-90deg)`;
+    setTimeout(() => {
+        erArrow.style.transform = `translate(-50%, 0) rotate(${ERPercentage * 1.8 - 90}deg)`;
+    }, 100); 
         }
         
     </script>

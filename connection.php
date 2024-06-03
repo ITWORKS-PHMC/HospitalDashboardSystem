@@ -1,5 +1,5 @@
 <?php
-$serverName = "uphmc-dc33";
+$serverName = "uphmc-dc34";
 $database = "phmc_reports";
 $uid = "census";
 $pass = "pass123";
@@ -12,13 +12,9 @@ $connection = [
 ];
 
 
-
-
 $conn = sqlsrv_connect($serverName,$connection);
-if(!$conn)
-die(print_r(sqlsrv_errors(),true));
-
-else // this for making sure its connected
-echo 'connection established'; // this for making sure its connected
+if (!$conn) {
+    die("Connection failed: " . sqlsrv_errors());
+}
 ?>    
 

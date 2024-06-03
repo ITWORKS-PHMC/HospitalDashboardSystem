@@ -1,5 +1,5 @@
 <?php
-require 'connection.php';
+require 'old-connection.php';
 
 // Fetch distinct years from the dashboard_census table
 $yearQuery = "SELECT DISTINCT YEAR(revenue_date) AS year FROM dashboard_revenue";

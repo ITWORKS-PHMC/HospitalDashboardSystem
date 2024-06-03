@@ -1,5 +1,5 @@
 <?php
-require 'connection.php';
+require 'old-connection.php';
 
 // Fetch data for chart1 
 $sql = "SELECT YEAR(revenue_date) AS year, MONTH(revenue_date) AS month, SUM(revenue_totalAmount) AS total 

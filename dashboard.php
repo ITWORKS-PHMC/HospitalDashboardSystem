@@ -2,11 +2,12 @@
 require 'connection.php';
 
 // Fetch distinct years from the dashboard_census table
-$yearQuery = "SELECT DISTINCT YEAR(transaction_date) AS year FROM dashboard_census";
-$yearResult = mysqli_query($conn, $yearQuery);
+$yearQuery = "SELECT DISTINCT YEAR(datetimeadmitted) AS year FROM rptCensus";
+$yearResult = sqlsrv_query($conn, $yearQuery);
 
 // Get selected month from the URL parameter
-$selected_month = isset($_GET['selected_month']) ? $_GET['selected_month'] : date('m');
+$selected_month = isset($_GET['selected_month']) ? intval($_GET['selected_month']) : date('m');
+
 
 // Get selected year from the URL parameter
 $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('Y');
@@ -36,7 +37,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         <form id="YearForm" action="dashboard.php" method="GET">
             <select class="Filter-button" id="yearDropdown" name="selected_year" >
                 <?php
-                while ($yearRow = mysqli_fetch_assoc($yearResult)) {
+                while ($yearRow = sqlsrv_fetch_array($yearResult,SQLSRV_FETCH_ASSOC)) {
                     ?>
                     <option value="<?php echo $yearRow['year']; ?>" <?php if ($selected_year == $yearRow['year']) echo 'selected'; ?>><?php echo $yearRow['year']; ?></option>
                     <?php
@@ -86,7 +87,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
         <div class="line-graphs-container" style="grid-column: 1 / 3;">
             <div class="line-graph">
                 <?php include 'TotalPatientGraph.php'; ?>
-            </div>
+            </div> 
         </div>
     </div>
 </div>
@@ -148,9 +149,7 @@ function updateTotalIPD(selectedYear, selectedMonth) {
     xhttp.open("GET", "totalbed.php?selected_year=" + selectedYear + "&selected_month=" + selectedMonth, true);
     xhttp.send();
     }
-
 </script>
 <footer></footer>
 </body>
 </html>
-

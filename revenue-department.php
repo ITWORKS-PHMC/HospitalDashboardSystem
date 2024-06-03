@@ -1,5 +1,5 @@
 <?php
-require 'connection.php';
+require 'old-connection.php';
 
 // Get selected department from the URL parameter
 $selected_department = isset($_GET['selected_department']) ? $_GET['selected_department'] : '';

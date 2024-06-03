@@ -1,12 +1,19 @@
 <?php
 require 'connection.php';
 
-// Fetch data from the database
-$sql = "SELECT YEAR(transaction_date) AS year, MONTH(transaction_date) AS month, SUM(total_census) AS total 
-        FROM dashboard_census
-        GROUP BY YEAR(transaction_date), MONTH(transaction_date)";
-$result = mysqli_query($conn, $sql);
+// Helper function to check the result and handle errors
+function checkQueryResult($result, $sql) {
+    if ($result === false) {
+        die(print_r(sqlsrv_errors(), true));
+    }
+    return $result;
+}
 
+// Fetch data from the database
+$sql = "SELECT YEAR(datetimeadmitted) AS year, MONTH(datetimeadmitted) AS month, COUNT(PK_psPatRegisters) AS total 
+        FROM rptCensus
+        GROUP BY YEAR(datetimeadmitted), MONTH(datetimeadmitted)";
+$result = checkQueryResult(sqlsrv_query($conn, $sql), $sql);
 
 $years = array();
 $dataPoints = array();
@@ -21,7 +28,7 @@ for ($i = 1; $i <= 12; $i++) {
 }
 
 // Process fetched data into format suitable for CanvasJS
-while ($row = mysqli_fetch_assoc($result)) {
+while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
     $year = $row['year'];
     $month = $row['month'];
     $total = $row['total'];
@@ -29,11 +36,11 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 // Fetch data from the database for the current year
-$sql_currentYear = "SELECT MONTH(transaction_date) AS month, SUM(total_census) AS total 
-                    FROM dashboard_census
-                    WHERE YEAR(transaction_date) = $currentYear
-                    GROUP BY MONTH(transaction_date)";
-$result_currentYear = mysqli_query($conn, $sql_currentYear);
+$sql_currentYear = "SELECT MONTH(datetimeadmitted) AS month, COUNT(PK_psPatRegisters) AS total 
+                    FROM rptCensus
+                    WHERE YEAR(datetimeadmitted) = $currentYear
+                    GROUP BY MONTH(datetimeadmitted)";
+$result_currentYear = checkQueryResult(sqlsrv_query($conn, $sql_currentYear), $sql_currentYear);
 
 $dataPoints_currentYear = array_fill(0, 12, array("y" => 0, "label" => ""));
 
@@ -44,30 +51,29 @@ for ($i = 0; $i < 12; $i++) {
 }
 
 // Process fetched data into format suitable for CanvasJS
-while ($row = mysqli_fetch_assoc($result_currentYear)) {
+while ($row = sqlsrv_fetch_array($result_currentYear, SQLSRV_FETCH_ASSOC)) {
     $month = $row['month'] - 1; // Adjust month to zero-based index for arrays
     $total = $row['total'];
     $dataPoints_currentYear[$month]["y"] = $total;
 }
 
-// Query to fetch data for chart 2 (yearly data for OPD, IPD, and ER)
-$sql_chart2 = "SELECT YEAR(transaction_date) AS year,
-                      SUM(CASE WHEN patient_transaction_type = 'O' THEN total_census ELSE 0 END) AS total_opd,
-                      SUM(CASE WHEN patient_transaction_type = 'I' THEN total_census ELSE 0 END) AS total_ipd,
-                      SUM(CASE WHEN patient_transaction_type = 'E' THEN total_census ELSE 0 END) AS total_er
-               FROM dashboard_census
-               GROUP BY YEAR(transaction_date)";
+$sql_chart2 = "SELECT YEAR(datetimeadmitted) AS year,
+                      COUNT(CASE WHEN pattrantype = 'O' THEN 1 END) AS total_opd,
+                      COUNT(CASE WHEN pattrantype = 'I' THEN 1 END) AS total_ipd,
+                      COUNT(CASE WHEN pattrantype = 'E' THEN 1 END) AS total_er
+               FROM rptCensus
+               GROUP BY YEAR(datetimeadmitted)";
                
-$result_chart2 = $conn->query($sql_chart2);
-
+$result_chart2 = checkQueryResult(sqlsrv_query($conn, $sql_chart2), $sql_chart2);
 
 $dataPoints_opd = array();
 $dataPoints_ipd = array();
 $dataPoints_er = array();
+
 // Check if any rows were returned for chart 2
-if ($result_chart2->num_rows > 0) {
+if (sqlsrv_has_rows($result_chart2)) {
     // Loop through each row of data for chart 2
-    while($row = $result_chart2->fetch_assoc()) {
+    while ($row = sqlsrv_fetch_array($result_chart2, SQLSRV_FETCH_ASSOC)) {
         // Populate dataPoints arrays with fetched data for OPD, IPD, and ER
         $year = $row["year"];
         $dataPoints_opd[] = array("y" => $row["total_opd"], "label" => $year);
@@ -94,7 +100,6 @@ if ($result_chart2->num_rows > 0) {
 </div>
 </div>
 
-
 <script>
 window.onload = function () {
     var dataPoints = <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>;
@@ -118,9 +123,9 @@ var chart = new CanvasJS.Chart("chartContainer", {
         shared: true 
     },
     legend: {
-        verticalAlign: "center",
-        horizontalAlign: "right",
-        
+        verticalAlign: "bottom",
+        horizontalAlign: "center",
+
     },
     data: [{
         type: "line",
@@ -150,8 +155,8 @@ var chart2 = new CanvasJS.Chart("chartContainer2", {
         title: "Number of Patients"
     },
     legend: {
-        verticalAlign: "center",
-        horizontalAlign: "right",
+        verticalAlign: "bottom",
+        horizontalAlign: "center",
     },
     backgroundColor: "transparent",
     toolTip: {
