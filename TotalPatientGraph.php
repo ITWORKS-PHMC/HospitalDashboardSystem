@@ -112,7 +112,7 @@ window.onload = function () {
 var chart = new CanvasJS.Chart("chartContainer", {
     animationEnabled: true,
     title: {
-        text: "Total Revenue for Year <?php echo $currentYear; ?>"
+        text: "Total Patients for Year <?php echo $currentYear." & ".$previousYear; ?>"
     },
     axisY: {
         title: "Revenue",

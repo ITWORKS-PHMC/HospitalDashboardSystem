@@ -269,6 +269,7 @@ h1 {
 .chart-label {
   text-align: center;
 }
+
 .Filter-button {
   height: 30px;
   width: 145px;
@@ -300,6 +301,17 @@ body {
   height: 270px;
   color: white;
 }
+.Depts-container {
+  box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  position: relative;
+  width: 1430px;
+  padding: 60px;
+  margin: 10px;
+  height: 700px;
+  color: white;
+}
+
 .bar-graphContainer {
   box-shadow: 0 2px 4px rgba(51, 104, 54, 0.767), 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
