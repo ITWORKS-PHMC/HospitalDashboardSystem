@@ -240,11 +240,12 @@ sqlsrv_close($conn);
         }
         .arrow {
             position: absolute;
-            font-size: 16px;
-            width: 3px; 
-            height: 100px;
-            background-color: black;
-            top: 145px;
+            width: 0; 
+            height: 0; 
+            border-left: 1px solid transparent;
+            border-right: 1px solid transparent;
+            border-bottom: 160px solid black; 
+            top: 85px; 
             left: 50%;
             transform-origin: bottom center;
             transition: transform 1s cubic-bezier(0.4, 0.0, 0.2, 1);

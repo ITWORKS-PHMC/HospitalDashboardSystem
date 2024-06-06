@@ -165,11 +165,11 @@ sqlsrv_close($conn);
         }
         .dept-arrow {
             position: absolute;
-            font-size: 16px;
-            width: 2px; 
-            height: 35px;
+            width: 1px; 
+            height: 38px;
             background-color: black;
-            top: 132px;
+            border-bottom: 20px solid black;
+            top: 108px;
             left: 50%;
             transform-origin: bottom center;
             transition: transform 1s cubic-bezier(0.4, 0.0, 0.2, 1);
@@ -211,17 +211,16 @@ sqlsrv_close($conn);
                     var arrowPosition = data[key];
                     var graphContainer = document.querySelector('.departmentmeter-graph-' + key);
 
-                    // Remove existing arrows if any
                     var existingArrow = graphContainer.querySelector('.dept-arrow');
                     if (existingArrow) {
                         graphContainer.removeChild(existingArrow);
                     }
 
-                    // Create and append new arrow
                     var arrow = document.createElement('div');
                     arrow.classList.add('dept-arrow');
                     graphContainer.appendChild(arrow);
                     var rotation = arrowPosition * 1.8 - 90;
+                    
                     arrow.style.transform = 'translate(-50%, 0) rotate(' + rotation + 'deg)';
                 }
             }
