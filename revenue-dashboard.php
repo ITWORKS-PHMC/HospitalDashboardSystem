@@ -32,7 +32,7 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 </style>
 <body>
    <div class="header" style="height:50px;">
-    <div class="button" style="margin-left: auto;">
+    <div class="button2" style="margin-left: auto;">
         <!-- Year dropdown form -->
         <form id="YearForm" action="revenue-dashboard.php" method="GET">
             <select class="Filter-button" id="yearDropdown" name="selected_year">

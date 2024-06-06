@@ -32,8 +32,8 @@ $selected_year = isset($_GET['selected_year']) ? $_GET['selected_year'] : date('
 </style>
 <body>
    <div class="header" style="height:50px; display: flex; align-items: center;flex-wrap: wrap;">
-    <div class="button" style="display: flex; align-items: center; margin-left:1505px;">
-            <button onclick="nextPage()" style="height: 60px; width: 350px; text-align: center; color: rgb(255, 255, 255); background-color: rgba(0, 56, 68, 1); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1); border-radius: 15px; cursor: pointer;">Open Departments</button>
+    <div class="button" style="display: flex; align-items: center; margin-left:1375px;">
+            <button onclick="nextPage()" style="margin-top:12px ;margin-right:5px;height: 30px;width: 200px;text-align: center; color: rgb(255, 255, 255); background-color: rgba(0, 56, 68, 1); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);border-radius: 25px;cursor: pointer;">Open Departments</button>
         <!-- Year dropdown form -->
         <form id="YearForm" action="dashboard.php" method="GET">
             <select class="Filter-button" id="yearDropdown" name="selected_year" >

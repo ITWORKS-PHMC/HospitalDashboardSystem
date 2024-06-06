@@ -19,7 +19,23 @@ h1 {
   display: flex;
   color: white;
 }
-
+.button {
+  /*button class for census-dashboard*/
+  position: relative;
+  width: 1000px;
+  margin-left: 20px;
+  display: flex;
+  color: white;
+  height: 50px;
+}
+.button2 {
+  /*button class for revenue-dashboard*/
+  position: relative;
+  width: 300px;
+  margin-left: 20px;
+  display: flex;
+  color: white;
+}
 /*GRAPHS*/
 .dashboard-content {
   flex-direction: column;
@@ -328,10 +344,10 @@ body {
 
 .perDept {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 25px; /* Half of the height */
+  border-radius: 25px;
   position: relative;
   width: 220px;
-  padding: 20px; /* Adjust padding accordingly */
+  padding: 20px;
   margin: 10px;
   height: 355px;
   overflow: hidden;

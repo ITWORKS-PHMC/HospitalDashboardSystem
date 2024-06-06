@@ -54,7 +54,7 @@
             margin-right: 50px;
         }
           .nav-buttonCensus {
-              background-color:#32CD32;
+              background-color:#A3D9B9;
               color: black;
               font-weight: bold;
               border: none;
@@ -70,7 +70,7 @@
               background: linear-gradient(135deg, #00b38f, #3cc2b7);
           }
           .nav-buttonRevenue {
-              background-color:#32CD32;
+              background-color:#A3D9B9;
               font-weight: bold;
               color: black;
               border: none;

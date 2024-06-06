@@ -97,8 +97,8 @@ if ($result_chart2->num_rows > 0) {
 <!DOCTYPE HTML>
 <html>
 <head>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.0.0"></script>
+<script src="./lib/revenue-graphs.js"></script>
+<script src="./lib/revenue-graphs-plugin.js"></script>
 </head>
 <body>
 <div class="charts-container" style="display: block;">
